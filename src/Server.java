@@ -14,6 +14,7 @@ public class Server {
 			while (true) {
 				System.out.println("Waiting for connecting....");
 				Socket socket = serverSocket.accept();
+				System.out.println("Creating one connection with socket : " + socket.getInetAddress() + "/" + socket.getPort());
 				clientPool.add(socket);
 				ServerThread serverThread = new ServerThread(socket);
 				serverThread.start();
