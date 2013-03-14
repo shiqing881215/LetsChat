@@ -4,6 +4,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 //import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 
@@ -47,7 +49,8 @@ public class ServerThread extends Thread{
 //							out.println()
 //						}
 //					}
-					out.println(msg+socket.getInetAddress()+"/"+socket.getPort());
+					SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss");
+					out.println("server " + formatter.format(new Date()) + ":\n" + msg + socket.getInetAddress()+"/"+socket.getPort());
 					out.flush();
 				}
 			} catch (IOException e) {

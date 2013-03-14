@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -65,6 +67,8 @@ public class Client implements ActionListener{
 		String msg = textField.getText();
 		textField.setText("");
 		out.println(msg);
+		SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss"); 
+		textArea.append("me " + formatter.format(new Date()) + ":\n" + msg);
 		out.flush();
 	}
 	
@@ -74,9 +78,9 @@ public class Client implements ActionListener{
 	public void receive() {
 		while (true) {
 			try {
-				textArea.append("Waiting for server response........");
+//				textArea.append("Waiting for server response........");
 				String msg = in.readLine();
-				textArea.append(msg);
+				textArea.append("\n" + msg);
 			} catch (IOException e) {
 				e.printStackTrace();
 				return;
