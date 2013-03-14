@@ -16,6 +16,8 @@ import javax.swing.JTextField;
 /**
  * 
  * @author Qing Shi
+ * Class Client
+ * Simply UI with receive text area, send text field and send button.
  *
  */
 public class Client implements ActionListener{
@@ -26,6 +28,9 @@ public class Client implements ActionListener{
 	private PrintWriter out;
 	private BufferedReader in;
 	
+	/**
+	 * Create UI and connect server.
+	 */
 	public Client() {
 		JFrame frame = new JFrame("Simple Client");
 		frame.setSize(400,300);
@@ -53,6 +58,9 @@ public class Client implements ActionListener{
 		} 
 	}
 	
+	/**
+	 * Send message to server.
+	 */
 	public void send() {
 		String msg = textField.getText();
 		textField.setText("");
@@ -60,9 +68,13 @@ public class Client implements ActionListener{
 		out.flush();
 	}
 	
+	/**
+	 * Always running to receive any information from server side.
+	 */
 	public void receive() {
 		while (true) {
 			try {
+				textArea.append("Waiting for server response........");
 				String msg = in.readLine();
 				textArea.append(msg);
 			} catch (IOException e) {
@@ -72,10 +84,16 @@ public class Client implements ActionListener{
 		}
 	}
 	
+	/**
+	 * When button is pressed, send the message.
+	 */
 	public void actionPerformed(ActionEvent evt) {
 		send();
 	}
 	
+	/**
+	 * Create UI and then wait to receive. Also listen to send action.
+	 */
 	public static void main(String[] args) {
 		Client client = new Client();
 		client.receive();

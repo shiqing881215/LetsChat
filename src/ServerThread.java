@@ -5,13 +5,22 @@ import java.io.PrintWriter;
 import java.net.Socket;
 //import java.util.ArrayList;
 
-
+/**
+ * 
+ * @author Qing Shi
+ * Class ServerThread
+ * Helper thread to deal with multiple users.
+ */
 public class ServerThread extends Thread{
 	private Socket socket;
 //	private ArrayList<Socket> clientsPool;
 	BufferedReader in;
 	PrintWriter out;
 	
+	/**
+	 * Initial in and out stream based on the connection socket.
+	 * @param s --- the connected socket.
+	 */
 	public ServerThread(Socket s) {
 		this.socket = s;
 //		this.clientsPool = pool;
@@ -23,6 +32,9 @@ public class ServerThread extends Thread{
 		}
 	}
 	
+	/**
+	 * Always listen the user input, reply automatically.
+	 */
 	public void run() {
 		while (true) {
 			try {

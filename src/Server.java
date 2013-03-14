@@ -3,7 +3,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
-
+/**
+ * 
+ * @author Qing Shi
+ * Class Server
+ * Open port for client to connect, always running, send the simple reply message to client directly.
+ */
 public class Server {
 	private static ArrayList<Socket> clientPool;
 	
