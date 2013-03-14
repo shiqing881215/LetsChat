@@ -13,7 +13,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-
+/**
+ * 
+ * @author Qing Shi
+ *
+ */
 public class Client implements ActionListener{
 	private JTextField textField;
 	private JTextArea textArea;
