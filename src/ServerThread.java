@@ -54,7 +54,6 @@ public class ServerThread extends Thread{
 					out.flush();
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

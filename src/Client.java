@@ -26,9 +26,12 @@ public class Client implements ActionListener{
 	private JTextField textField;
 	private JTextArea textArea;
 	private JButton button;
+	
 	private Socket socket;
 	private PrintWriter out;
 	private BufferedReader in;
+	
+	private String userName;
 	
 	/**
 	 * Create UI and connect server.
@@ -68,6 +71,9 @@ public class Client implements ActionListener{
 		textField.setText("");
 		out.println(msg);
 		SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss"); 
+		if (textArea.getText().length() != 0) { // not the first time send, message in another line
+			textArea.append("\n");
+		}
 		textArea.append("me " + formatter.format(new Date()) + ":\n" + msg);
 		out.flush();
 	}
