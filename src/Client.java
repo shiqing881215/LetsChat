@@ -77,7 +77,9 @@ public class Client implements ActionListener{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		
-		
+		// A little trick here, first connect the server
+		// Seems that logic should not be like this, however, it's not better to put this in the actionPerformed method.
+		// For later security check, we can do some trick
 		try {
 			socket = new Socket("127.0.0.1",9000);
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -118,9 +120,11 @@ public class Client implements ActionListener{
 	public void receive() {
 		while (true) {
 			try {
-//				textArea.append("Waiting for server response........");
+//				System.out.print(1);
+//				if (in != null) {  // First login page, not receive, avoid in == null
 				String msg = in.readLine();
 				textArea.append("\n" + msg);
+//				}
 			} catch (IOException e) {
 				e.printStackTrace();
 				return;
@@ -139,6 +143,7 @@ public class Client implements ActionListener{
 			frame.setVisible(true);
 		}
 		if (evt.getSource() == sendButton) {
+			// Send button send the message 
 			send();
 		}
 	}
