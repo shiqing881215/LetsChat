@@ -9,14 +9,16 @@ import javax.swing.JTextField;
 
 
 public class LoginPage implements ActionListener{
+	private JFrame frame;
+	private JTextField userNameTextField;
 	
 	public  LoginPage() {
-		JFrame frame = new JFrame("Login");
+		frame = new JFrame("Login");
 		frame.setSize(300, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JLabel userNameLabel = new JLabel("User Name");
-		JTextField userNameTextField = new JTextField(20);
+		userNameTextField = new JTextField(20);
 		JButton loginButton = new JButton("Login");
 		loginButton.addActionListener(this);
 		
@@ -30,8 +32,13 @@ public class LoginPage implements ActionListener{
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		
+	public void actionPerformed(ActionEvent evt) {
+//		Client client = new Client(userNameTextField.getText());
+//		client.setUserName(userNameTextField.getText());  System.out.println(userNameTextField.getText());
+		frame.setVisible(false);
+//		frame.dispose();
+//		client.receive();
+//		System.out.println("he");
 	}
 	
 	public static void main (String[] args) {

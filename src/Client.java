@@ -11,9 +11,12 @@ import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 /**
  * 
@@ -23,9 +26,11 @@ import javax.swing.JTextField;
  *
  */
 public class Client implements ActionListener{
-	private JTextField textField;
+	private JFrame frame;
+	private JPanel loginPanel, chatPanel;
+	private JTextField sendTextField, userNameTextField;
 	private JTextArea textArea;
-	private JButton button;
+	private JButton sendButton, loginButton;
 	
 	private Socket socket;
 	private PrintWriter out;
@@ -37,17 +42,38 @@ public class Client implements ActionListener{
 	 * Create UI and connect server.
 	 */
 	public Client() {
-		JFrame frame = new JFrame("Simple Client");
-		frame.setSize(400,300);
-		textField = new JTextField();
-		textArea = new JTextArea();
-		button = new JButton("send");
-		textArea.setEditable(false);
-		frame.getContentPane().add(new JScrollPane(textArea)); 
-		frame.getContentPane().add(textField,"South");
-		frame.getContentPane().add(button, "West");
-		button.addActionListener(this);
+//		this.userName = userName;
+		frame = new JFrame(userName);
+		frame.setSize(400,400);
 		
+		loginPanel = new JPanel();
+		chatPanel = new JPanel();
+		
+		JLabel userNameLabel = new JLabel("User Name");
+		sendTextField = new JTextField(10);
+		userNameTextField = new JTextField(10);
+		sendButton = new JButton("send");
+		loginButton = new JButton("login");
+		sendButton.addActionListener(this);
+		loginButton.addActionListener(this);
+		textArea = new JTextArea(20,30);
+		textArea.setEditable(false);
+		JScrollPane scroller = new JScrollPane(textArea);
+		scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		loginPanel.add(userNameLabel);
+		loginPanel.add(userNameTextField);
+		loginPanel.add(loginButton);
+		
+		chatPanel.add(scroller);
+		chatPanel.add(sendButton);
+		chatPanel.add(sendTextField);
+		
+//		frame.getContentPane().add(new JScrollPane(textArea)); 
+//		frame.getContentPane().add(textField,"South");
+//		frame.getContentPane().add(button, "West");
+		
+		frame.setContentPane(loginPanel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		
@@ -63,18 +89,26 @@ public class Client implements ActionListener{
 		} 
 	}
 	
+//	public String getUserName() {
+//		return this.userName;
+//	}
+//	
+//	public void setUserName(String userName) {
+//		this.userName = userName;
+//	}
+	
 	/**
 	 * Send message to server.
 	 */
 	public void send() {
-		String msg = textField.getText();
-		textField.setText("");
+		String msg = sendTextField.getText();
+		sendTextField.setText("");
 		out.println(msg);
 		SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss"); 
 		if (textArea.getText().length() != 0) { // not the first time send, message in another line
 			textArea.append("\n");
 		}
-		textArea.append("me " + formatter.format(new Date()) + ":\n" + msg);
+		textArea.append(userName + " " + formatter.format(new Date()) + ":\n" + msg);
 		out.flush();
 	}
 	
@@ -98,7 +132,15 @@ public class Client implements ActionListener{
 	 * When button is pressed, send the message.
 	 */
 	public void actionPerformed(ActionEvent evt) {
-		send();
+		if (evt.getSource() == loginButton) {
+			this.userName = userNameTextField.getText();
+			frame.setTitle(userName);
+			frame.setContentPane(chatPanel);
+			frame.setVisible(true);
+		}
+		if (evt.getSource() == sendButton) {
+			send();
+		}
 	}
 	
 	/**
