@@ -1,10 +1,13 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,6 +21,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
+import Util.Protocol;
+
 /**
  * 
  * @author Qing Shi
@@ -29,7 +34,7 @@ public class Client implements ActionListener{
 	private JFrame frame;
 	private JPanel loginPanel, chatPanel;
 	private JTextField sendTextField, userNameTextField;
-	private JTextArea textArea;
+	private JTextArea chatTextArea, userListTextArea;
 	private JButton sendButton, loginButton;
 	
 	private Socket socket;
@@ -42,12 +47,12 @@ public class Client implements ActionListener{
 	 * Create UI and connect server.
 	 */
 	public Client() {
-//		this.userName = userName;
 		frame = new JFrame(userName);
-		frame.setSize(400,400);
+		frame.setSize(400,600);
 		
 		loginPanel = new JPanel();
 		chatPanel = new JPanel();
+//		userListPanel = new JPanel();
 		
 		JLabel userNameLabel = new JLabel("User Name");
 		sendTextField = new JTextField(10);
@@ -56,18 +61,23 @@ public class Client implements ActionListener{
 		loginButton = new JButton("login");
 		sendButton.addActionListener(this);
 		loginButton.addActionListener(this);
-		textArea = new JTextArea(20,30);
-		textArea.setEditable(false);
-		JScrollPane scroller = new JScrollPane(textArea);
-		scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		chatTextArea = new JTextArea(20,30);
+		chatTextArea.setEditable(false);
+		JScrollPane chatScroller = new JScrollPane(chatTextArea);
+		chatScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		userListTextArea = new JTextArea(10,30);
+		userListTextArea.setEditable(false);
+		JScrollPane usreListScroller = new JScrollPane(userListTextArea);
+		usreListScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		loginPanel.add(userNameLabel);
 		loginPanel.add(userNameTextField);
 		loginPanel.add(loginButton);
 		
-		chatPanel.add(scroller);
+		chatPanel.add(chatScroller);
 		chatPanel.add(sendButton);
 		chatPanel.add(sendTextField);
+		chatPanel.add(usreListScroller);
 		
 //		frame.getContentPane().add(new JScrollPane(textArea)); 
 //		frame.getContentPane().add(textField,"South");
@@ -77,11 +87,28 @@ public class Client implements ActionListener{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		
+		// When window is closed, close all its connected input/output stream and socket
+		// At the same time, send the logout info to server to clear this user info on server
+		frame.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {   
+				try {
+					out.println("Logout " + socket.getLocalPort());  // "Logout socketport"
+					out.flush();
+					socket.close();
+					frame.dispose();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		
 		// A little trick here, first connect the server
 		// Seems that logic should not be like this, however, it's not better to put this in the actionPerformed method.
 		// For later security check, we can do some trick
 		try {
 			socket = new Socket("127.0.0.1",9000);
+			System.out.println("Client : " + socket.getLocalPort());
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream());
 		} catch (UnknownHostException e) { 
@@ -107,10 +134,10 @@ public class Client implements ActionListener{
 		sendTextField.setText("");
 		out.println(msg);
 		SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss"); 
-		if (textArea.getText().length() != 0) { // not the first time send, message in another line
-			textArea.append("\n");
+		if (chatTextArea.getText().length() != 0) { // not the first time send, message in another line
+			chatTextArea.append("\n");
 		}
-		textArea.append(userName + " " + formatter.format(new Date()) + ":\n" + msg);
+		chatTextArea.append(userName + " " + formatter.format(new Date()) + ":\n" + msg);
 		out.flush();
 	}
 	
@@ -120,15 +147,32 @@ public class Client implements ActionListener{
 	public void receive() {
 		while (true) {
 			try {
-//				System.out.print(1);
-//				if (in != null) {  // First login page, not receive, avoid in == null
 				String msg = in.readLine();
-				textArea.append("\n" + msg);
-//				}
+				int returnCode = Protocol.proceed(msg);
+//				System.out.print(returnCode);
+				msg = msg.replaceAll("%20", "\n");
+//				System.out.print(msg);
+
+				if (returnCode == 0) {  // Update user list
+					msg = msg.substring(9);  // remove the tag "userList"
+					userListTextArea.setText(msg);
+				} else {  // Update chat box
+					chatTextArea.append("\n" + msg);
+				}
+			} catch (SocketException socketException) {
+				System.out.println("This client has logged out.");
+				return;
 			} catch (IOException e) {
 				e.printStackTrace();
+//				out.close();
+//				try {
+//					in.close();
+//					socket.close();
+//				} catch (IOException e1) {
+//					e1.printStackTrace();
+//				}
 				return;
-			}
+			} 
 		}
 	}
 	
@@ -141,6 +185,11 @@ public class Client implements ActionListener{
 			frame.setTitle(userName);
 			frame.setContentPane(chatPanel);
 			frame.setVisible(true);
+			out.println(userName);   // Send the login userName to server
+			out.flush();
+			// Send the update request to server after login
+			ClientUpdateUserlistThread cuut = new ClientUpdateUserlistThread(out);
+			cuut.start();
 		}
 		if (evt.getSource() == sendButton) {
 			// Send button send the message 

@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import Util.Protocol;
+
 /**
  * 
  * @author Qing Shi
@@ -16,8 +18,9 @@ import java.util.Date;
 public class ServerThread extends Thread{
 	private Socket socket;
 //	private ArrayList<Socket> clientsPool;
-	BufferedReader in;
-	PrintWriter out;
+	private BufferedReader in;
+	private PrintWriter out;
+	private boolean isLoginCheck = true;
 	
 	/**
 	 * Initial in and out stream based on the connection socket.
@@ -28,7 +31,7 @@ public class ServerThread extends Thread{
 //		this.clientsPool = pool;
 		try {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			out = new PrintWriter(s.getOutputStream());
+			out = new PrintWriter(socket.getOutputStream());
 		} catch (IOException e) {
 			System.out.println("Server thread create error!");
 		}
@@ -44,14 +47,28 @@ public class ServerThread extends Thread{
 				if (msg == null) {
 					return;
 				} else {
-//					for (int i = 0; i < clientsPool.size(); i++) {
-//						if (socket == clientsPool.get(i)) {
-//							out.println()
-//						}
-//					}
-					SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss");
-					out.println("server " + formatter.format(new Date()) + ":\n" + msg + socket.getInetAddress()+"/"+socket.getPort());
-					out.flush();
+					// Check whether it's login process and send the login user list
+					if (isLoginCheck) {  // Login, msg is the user name
+						User user = new User(socket,msg);
+						Server.getClientsPool().add(user);
+						out.println("UserList " + Server.getLoginUserList());
+						out.flush();
+						isLoginCheck = false;
+					} else {
+//						System.out.println("msg:" + msg);
+						int returnCode = Protocol.proceed(msg);
+						if (returnCode == 1) {   // If it's the update request
+							out.println("UserList " + Server.getLoginUserList());
+							out.flush();
+						} else if (returnCode == 2) {  // If it's logout request
+							int port = Integer.parseInt(msg.substring(7));
+							Server.removeUser(port);
+						} else {   // If it's chat request
+							SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss");
+							out.println("server " + formatter.format(new Date()) + "%20" + msg + socket.getInetAddress()+"/"+socket.getPort());
+							out.flush();
+						}
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

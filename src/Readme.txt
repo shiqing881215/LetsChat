@@ -9,3 +9,9 @@ Add login page.
 Use the same frame as client UI. Create two panel, change frame's content fram when login.
 Add username for each login user.
 LoginPage class is not used.
+
+Version 2
+Add user list component.
+Each user can view all login user on the server.
+The user list can update on the fly. 
+You can set the update frequency at the ClientUpdateUserlistThread class. Default is 5 seconds.
