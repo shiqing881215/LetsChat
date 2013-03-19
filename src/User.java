@@ -4,6 +4,7 @@ import java.net.Socket;
  * 
  * @author Qing Shi
  * User class to hold the login client information
+ * Two fields --- Connected socket and the user name bound with this socket
  */
 public class User {
 	private Socket socket;

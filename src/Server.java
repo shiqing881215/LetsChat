@@ -13,7 +13,6 @@ import java.util.ArrayList;
 public class Server {
 	private static ArrayList<User> clientsPool;
 //	private static Hashtable<String, String> userAndPassword;
-//	private static ArrayList<String> clientsList;
 	
 	public static ArrayList<User> getClientsPool() {
 		if (clientsPool == null) {
@@ -54,18 +53,16 @@ public class Server {
 		try {
 			ServerSocket serverSocket = new ServerSocket(9000);
 			clientsPool = new ArrayList<User>();
-//			clientsList = new ArrayList<String>();
 			while (true) {
 				System.out.println("Waiting for connecting....");
 				Socket socket = serverSocket.accept();
 				System.out.println("Creating one connection with socket : " + socket.getInetAddress() + "/" + socket.getLocalPort());
-//				clientsPool.add(socket);
 				ServerThread serverThread = new ServerThread(socket);
 				serverThread.start();
-				System.out.println("Socket info: ");
-				for (int i =0; i < clientsPool.size(); i++) {
-					System.out.println(clientsPool.get(i).getSocket().getInetAddress() + "/" + clientsPool.get(i).getSocket().getPort() + " : " + clientsPool.get(i).getSocket().isClosed());
-				}
+//				System.out.println("Socket info: ");
+//				for (int i =0; i < clientsPool.size(); i++) {
+//					System.out.println(clientsPool.get(i).getSocket().getInetAddress() + "/" + clientsPool.get(i).getSocket().getPort() + " : " + clientsPool.get(i).getSocket().isClosed());
+//				}
 			}
 		} catch (IOException e) {
 			System.out.println("Server down!");

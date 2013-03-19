@@ -17,7 +17,6 @@ import Util.Protocol;
  */
 public class ServerThread extends Thread{
 	private Socket socket;
-//	private ArrayList<Socket> clientsPool;
 	private BufferedReader in;
 	private PrintWriter out;
 	private boolean isLoginCheck = true;
@@ -28,7 +27,6 @@ public class ServerThread extends Thread{
 	 */
 	public ServerThread(Socket s) {
 		this.socket = s;
-//		this.clientsPool = pool;
 		try {
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream());
@@ -50,12 +48,17 @@ public class ServerThread extends Thread{
 					// Check whether it's login process and send the login user list
 					if (isLoginCheck) {  // Login, msg is the user name
 						User user = new User(socket,msg);
-						Server.getClientsPool().add(user);
+						Server.getClientsPool().add(user);   // Add this login user to pool
+						
+//						System.out.println("Socket info: ");
+//						for (int i =0; i < Server.getClientsPool().size(); i++) {
+//							System.out.println(Server.getClientsPool().get(i).getSocket().getInetAddress() + "/" + Server.getClientsPool().get(i).getSocket().getPort() + " : " + Server.getClientsPool().get(i).getSocket().isClosed());
+//						}
+						
 						out.println("UserList " + Server.getLoginUserList());
 						out.flush();
 						isLoginCheck = false;
 					} else {
-//						System.out.println("msg:" + msg);
 						int returnCode = Protocol.proceed(msg);
 						if (returnCode == 1) {   // If it's the update request
 							out.println("UserList " + Server.getLoginUserList());

@@ -52,7 +52,6 @@ public class Client implements ActionListener{
 		
 		loginPanel = new JPanel();
 		chatPanel = new JPanel();
-//		userListPanel = new JPanel();
 		
 		JLabel userNameLabel = new JLabel("User Name");
 		sendTextField = new JTextField(10);
@@ -93,6 +92,7 @@ public class Client implements ActionListener{
 			@Override
 			public void windowClosing(WindowEvent e) {   
 				try {
+					System.out.println("Logout");
 					out.println("Logout " + socket.getLocalPort());  // "Logout socketport"
 					out.flush();
 					socket.close();
@@ -149,9 +149,7 @@ public class Client implements ActionListener{
 			try {
 				String msg = in.readLine();
 				int returnCode = Protocol.proceed(msg);
-//				System.out.print(returnCode);
 				msg = msg.replaceAll("%20", "\n");
-//				System.out.print(msg);
 
 				if (returnCode == 0) {  // Update user list
 					msg = msg.substring(9);  // remove the tag "userList"
@@ -164,13 +162,6 @@ public class Client implements ActionListener{
 				return;
 			} catch (IOException e) {
 				e.printStackTrace();
-//				out.close();
-//				try {
-//					in.close();
-//					socket.close();
-//				} catch (IOException e1) {
-//					e1.printStackTrace();
-//				}
 				return;
 			} 
 		}

@@ -15,3 +15,15 @@ Add user list component.
 Each user can view all login user on the server.
 The user list can update on the fly. 
 You can set the update frequency at the ClientUpdateUserlistThread class. Default is 5 seconds.
+
+Version 3
+Complete the user list component.
+Whenever new user login or login user logout, all clients user list will update correctly on the fly.
+Tricks:
+1. To delete the logout socket. Not know whether the socket in client and server seems to be the different sockets. 
+   So to identify the socket, use the port attribute. In client, using socket.getLocalPort(); in server, using socket.getPort().
+2. In client, frame add window listener. When close the window, close the socket and send the logout infor with port to server.
+3. Protocol add situation to deal with logout, return 2.
+4. Remove the add user when user login action from server to serverClient, which makes more sense. 
+   When get logout infor, remove the user bound with specified port number.
+5. Add user class, to hold the socket and user name infor together.
