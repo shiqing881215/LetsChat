@@ -1,3 +1,4 @@
+package Function;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -13,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,6 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
 import Util.Protocol;
+import Util.SecurityUtil;
 
 /**
  * 
@@ -33,7 +36,7 @@ import Util.Protocol;
 public class Client implements ActionListener{
 	private JFrame frame;
 	private JPanel loginPanel, chatPanel;
-	private JTextField sendTextField, userNameTextField;
+	private JTextField sendTextField, userNameTextField, pwdTextField;
 	private JTextArea chatTextArea, userListTextArea;
 	private JButton sendButton, loginButton;
 	
@@ -54,8 +57,10 @@ public class Client implements ActionListener{
 		chatPanel = new JPanel();
 		
 		JLabel userNameLabel = new JLabel("User Name");
+		JLabel pwdLabel = new JLabel("Password");
 		sendTextField = new JTextField(10);
-		userNameTextField = new JTextField(10);
+		userNameTextField = new JTextField(15);
+		pwdTextField = new JTextField(15);
 		sendButton = new JButton("send");
 		loginButton = new JButton("login");
 		sendButton.addActionListener(this);
@@ -72,6 +77,8 @@ public class Client implements ActionListener{
 		loginPanel.add(userNameLabel);
 		loginPanel.add(userNameTextField);
 		loginPanel.add(loginButton);
+		loginPanel.add(pwdLabel);
+		loginPanel.add(pwdTextField);
 		
 		chatPanel.add(chatScroller);
 		chatPanel.add(sendButton);
@@ -172,15 +179,32 @@ public class Client implements ActionListener{
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getSource() == loginButton) {
-			this.userName = userNameTextField.getText();
-			frame.setTitle(userName);
-			frame.setContentPane(chatPanel);
-			frame.setVisible(true);
-			out.println(userName);   // Send the login userName to server
-			out.flush();
-			// Send the update request to server after login
-			ClientUpdateUserlistThread cuut = new ClientUpdateUserlistThread(out);
-			cuut.start();
+			boolean success = SecurityUtil.validate(userNameTextField.getText(), pwdTextField.getText());
+			System.out.println(success);
+			if (success) {
+				this.userName = userNameTextField.getText();
+				frame.setTitle(userName);
+				frame.setContentPane(chatPanel);
+				frame.setVisible(true);
+				out.println(userName);   // Send the login userName to server
+				out.flush();
+				// Send the update request to server after login
+				ClientUpdateUserlistThread cuut = new ClientUpdateUserlistThread(out);
+				cuut.start();
+			} else {
+				final JFrame loginErrorFrame = new JFrame();
+				loginErrorFrame.setSize(100, 100);
+				JLabel loginFailLabel = new JLabel("Login Fail.");
+				loginErrorFrame.add(loginFailLabel);
+				JButton okButton = new JButton("OK");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						loginErrorFrame.dispose();
+					}
+				});
+				loginErrorFrame.add(okButton);
+				loginErrorFrame.setVisible(true);
+			}
 		}
 		if (evt.getSource() == sendButton) {
 			// Send button send the message 
