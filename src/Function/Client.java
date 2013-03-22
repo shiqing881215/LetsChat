@@ -14,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -36,9 +35,9 @@ import Util.SecurityUtil;
 public class Client implements ActionListener{
 	private JFrame frame;
 	private JPanel loginPanel, chatPanel;
-	private JTextField sendTextField, userNameTextField, pwdTextField;
+	private JTextField sendTextField, userNameTextField, pwdTextField, registerUserNameTextField, registerPwdTextField, registerConfirmPwdTextField;
 	private JTextArea chatTextArea, userListTextArea;
-	private JButton sendButton, loginButton;
+	private JButton sendButton, loginButton, registerButton;
 	
 	private Socket socket;
 	private PrintWriter out;
@@ -56,15 +55,27 @@ public class Client implements ActionListener{
 		loginPanel = new JPanel();
 		chatPanel = new JPanel();
 		
+		// Login and register compenents
 		JLabel userNameLabel = new JLabel("User Name");
 		JLabel pwdLabel = new JLabel("Password");
-		sendTextField = new JTextField(10);
-		userNameTextField = new JTextField(15);
-		pwdTextField = new JTextField(15);
-		sendButton = new JButton("send");
-		loginButton = new JButton("login");
-		sendButton.addActionListener(this);
+		JLabel registerLabel = new JLabel("New --- Please register first.                                     ");
+		JLabel registerUserNameLabel = new JLabel("User Name");
+		JLabel registerPwdLabel = new JLabel("Password");
+		JLabel confirmPwdLabel = new JLabel("Confirm Password");
+		userNameTextField = new JTextField(23);
+		pwdTextField = new JTextField(23);
+		registerUserNameTextField = new JTextField(23);
+		registerPwdTextField = new JTextField(23);
+		registerConfirmPwdTextField = new JTextField(20);
+		loginButton = new JButton("Login");
 		loginButton.addActionListener(this);
+		registerButton = new JButton("Register");
+		registerButton.addActionListener(this);
+
+		// Chat components
+		sendTextField = new JTextField(10);
+		sendButton = new JButton("send");
+		sendButton.addActionListener(this);
 		chatTextArea = new JTextArea(20,30);
 		chatTextArea.setEditable(false);
 		JScrollPane chatScroller = new JScrollPane(chatTextArea);
@@ -76,9 +87,17 @@ public class Client implements ActionListener{
 		
 		loginPanel.add(userNameLabel);
 		loginPanel.add(userNameTextField);
-		loginPanel.add(loginButton);
 		loginPanel.add(pwdLabel);
 		loginPanel.add(pwdTextField);
+		loginPanel.add(loginButton);
+		loginPanel.add(registerLabel);
+		loginPanel.add(registerUserNameLabel);
+		loginPanel.add(registerUserNameTextField);
+		loginPanel.add(registerPwdLabel);
+		loginPanel.add(registerPwdTextField);
+		loginPanel.add(confirmPwdLabel);
+		loginPanel.add(registerConfirmPwdTextField);
+		loginPanel.add(registerButton);
 		
 		chatPanel.add(chatScroller);
 		chatPanel.add(sendButton);
@@ -192,19 +211,26 @@ public class Client implements ActionListener{
 				ClientUpdateUserlistThread cuut = new ClientUpdateUserlistThread(out);
 				cuut.start();
 			} else {
-				final JFrame loginErrorFrame = new JFrame();
-				loginErrorFrame.setSize(100, 100);
+				// Using final otherwise error in the actionPerformed below
+				// Also, use panel to add label and button at the same time coz final can be changed once
+				final JFrame loginErrorFrame = new JFrame();   
+				loginErrorFrame.setSize(120, 100);
+				JPanel loginErrorPanel = new JPanel();
 				JLabel loginFailLabel = new JLabel("Login Fail.");
-				loginErrorFrame.add(loginFailLabel);
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
 						loginErrorFrame.dispose();
 					}
 				});
-				loginErrorFrame.add(okButton);
+				loginErrorPanel.add(loginFailLabel);
+				loginErrorPanel.add(okButton);
+				loginErrorFrame.setContentPane(loginErrorPanel);
 				loginErrorFrame.setVisible(true);
 			}
+		}
+		if (evt.getSource() == registerButton) {
+			
 		}
 		if (evt.getSource() == sendButton) {
 			// Send button send the message 

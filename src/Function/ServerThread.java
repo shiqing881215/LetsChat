@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 //import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,6 +43,7 @@ public class ServerThread extends Thread{
 	public void run() {
 		while (true) {
 			try {
+//				if (in == null) return;
 				String msg = in.readLine();
 				if (msg == null) {
 					return;
@@ -74,8 +76,12 @@ public class ServerThread extends Thread{
 						}
 					}
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (SocketException socketException) {  // Deal with issue when close window before login, coz now already connect with server.
+				System.out.println("Close window before login.");
+				return;
+			} catch (IOException ioexception) {
+				ioexception.printStackTrace();
+				return;
 			}
 		}
 	}
