@@ -201,9 +201,9 @@ public class Client implements ActionListener{
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getSource() == loginButton) {
-			boolean success = SecurityUtil.validate(userNameTextField.getText(), pwdTextField.getText());
-			System.out.println(success);
-			if (success) {
+			int loginRetCode = SecurityUtil.checkLogin(userNameTextField.getText(), pwdTextField.getText());
+			System.out.println("code:" + loginRetCode);
+			if (loginRetCode == 3) {
 				this.userName = userNameTextField.getText();
 				frame.setTitle(userName);
 				frame.setContentPane(chatPanel);
@@ -214,12 +214,20 @@ public class Client implements ActionListener{
 				ClientUpdateUserlistThread cuut = new ClientUpdateUserlistThread(out);
 				cuut.start();
 			} else {
+				String loginErrMsg;
+				if (loginRetCode == 2) {
+					loginErrMsg = "This user already login!";
+				} else if (loginRetCode == 1) {
+					loginErrMsg = "Password error!";
+				} else {
+					loginErrMsg = "No such user!";
+				}
 				// Using final otherwise error in the actionPerformed below
 				// Also, use panel to add label and button at the same time coz final can be changed once
 				final JFrame loginErrorFrame = new JFrame();   
-				loginErrorFrame.setSize(120, 100);
+				loginErrorFrame.setSize(150, 100);
 				JPanel loginErrorPanel = new JPanel();
-				JLabel loginFailLabel = new JLabel("Login Fail.");
+				JLabel loginFailLabel = new JLabel(loginErrMsg);
 				JButton loginOkButton = new JButton("OK");
 				loginOkButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {

@@ -7,6 +7,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import Function.Server;
+import Function.User;
+
 /**
  * 
  * @author Qing Shi
@@ -15,6 +18,9 @@ import java.io.OutputStreamWriter;
 public class SecurityUtil {
 	private static String path;
 	
+	/**
+	 * Method set the pwd.txt file path.
+	 */
 	public static void setPath() {
 		try {
 			File dir = new File("");
@@ -28,10 +34,12 @@ public class SecurityUtil {
 	 * 
 	 * @param userName
 	 * @param pwd
-	 * @return true --- validate success
-	 *         false --- validate fail
+	 * @return 0 --- No such user
+	 *         1 --- Password error
+	 *         2 --- User already login
+	 *         3 --- All good
 	 */
-	public static boolean validate (String userName, String pwd) {
+	public static int checkLogin (String userName, String pwd) {
 		setPath();
 		System.out.println(userName + "    " + pwd + "    " + pwd.hashCode());
 		try {
@@ -47,16 +55,22 @@ public class SecurityUtil {
 				} else {
 					index = line.indexOf(' ');
 					if (line.substring(0, index).equals(userName)) {
-						if (Integer.parseInt(line.substring(index+1)) == pwd.hashCode()) {  // Using hash code
-							return true;
+						if (Integer.parseInt(line.substring(index+1)) == pwd.hashCode()) {  
+							if (!checkLoggingUser(userName)) {
+								return 3; // All match, no login
+							} else {
+								return 2; // Already login
+							}
+						} else {
+							return 1;  // Pwd error
 						}
 					}
 				}
 			}
-			return false;
+			return 0; // No such user
 		} catch (IOException e) {
 			System.out.println("Validate exception!");
-			return false;
+			return 0;
 		}
 	}
 	
@@ -82,7 +96,30 @@ public class SecurityUtil {
 	}
 	
 	/**
-	 * 
+	 * Check whether this user has logged in.
+	 * @param userName
+	 * @return false --- no logging user, this user can log in
+	 *         true --- already login user, this user cannot duplicatly login
+	 */
+	public static boolean checkLoggingUser(String userName) {
+		System.out.println("User info: " + userName);
+		System.out.println(Server.getClientsPool() == null);
+//		System.out.println("POOL SIZE " + Server.getClientsPool().size());
+		for (int i =0; i < Server.getClientsPool().size(); i++) {
+			System.out.println(Server.getClientsPool().get(i).getUserName());
+		}
+
+		
+		for (User user : Server.getClientsPool()) {
+			if (user.getUserName().equals(userName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Check whether this user name has been used.
 	 * @param userName --- Register Username
 	 * @return false --- no duplicate name, can be registered
 	 *         true --- duplicate name, cannot be registered
