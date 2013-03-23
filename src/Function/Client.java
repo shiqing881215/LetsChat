@@ -195,6 +195,9 @@ public class Client implements ActionListener{
 	
 	/**
 	 * When button is pressed, send the message.
+	 * Login
+	 * Register
+	 * Send(chat message)
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getSource() == loginButton) {
@@ -217,20 +220,53 @@ public class Client implements ActionListener{
 				loginErrorFrame.setSize(120, 100);
 				JPanel loginErrorPanel = new JPanel();
 				JLabel loginFailLabel = new JLabel("Login Fail.");
-				JButton okButton = new JButton("OK");
-				okButton.addActionListener(new ActionListener() {
+				JButton loginOkButton = new JButton("OK");
+				loginOkButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
 						loginErrorFrame.dispose();
 					}
 				});
 				loginErrorPanel.add(loginFailLabel);
-				loginErrorPanel.add(okButton);
+				loginErrorPanel.add(loginOkButton);
 				loginErrorFrame.setContentPane(loginErrorPanel);
 				loginErrorFrame.setVisible(true);
 			}
 		}
 		if (evt.getSource() == registerButton) {
-			
+			int registerRetCode = SecurityUtil.checkRegister
+					(registerUserNameTextField.getText(), registerPwdTextField.getText(),registerConfirmPwdTextField.getText());
+			if (registerRetCode == 2) {  // Register success
+				this.userName = registerUserNameTextField.getText();
+				frame.setTitle(userName);
+				frame.setContentPane(chatPanel);
+				frame.setVisible(true);
+				out.println(userName);   // Send the login userName to server
+				out.flush();
+				// Send the update request to server after login
+				ClientUpdateUserlistThread cuut = new ClientUpdateUserlistThread(out);
+				cuut.start();
+			} else {
+				String registerErrMsg;
+				if (registerRetCode == 0) {
+					registerErrMsg = "Password not match!";
+				} else {
+					registerErrMsg = "Username already existed!";
+				}
+				final JFrame registerErrorFrame = new JFrame();   
+				registerErrorFrame.setSize(160, 100);
+				JPanel registerErrorPanel = new JPanel();
+				JLabel registerFailLabel = new JLabel(registerErrMsg);
+				JButton registerOkButton = new JButton("OK");
+				registerOkButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						registerErrorFrame.dispose();
+					}
+				});
+				registerErrorPanel.add(registerFailLabel);
+				registerErrorPanel.add(registerOkButton);
+				registerErrorFrame.setContentPane(registerErrorPanel);
+				registerErrorFrame.setVisible(true);
+			}
 		}
 		if (evt.getSource() == sendButton) {
 			// Send button send the message 

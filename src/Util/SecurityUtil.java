@@ -125,7 +125,7 @@ public class SecurityUtil {
 		try {
 			stream = new FileOutputStream(path, true);
 			writer = new OutputStreamWriter(stream);
-			writer.write ("\r\n" + userName + " " + pwd);
+			writer.write ("\r\n" + userName + " " + pwd.hashCode());
 			writer.close();
 			stream.close();
 		} catch(Exception e) {
