@@ -13,12 +13,8 @@ import java.util.ArrayList;
  */
 public class Server {
 	private static ArrayList<User> clientsPool = new ArrayList<User>();
-//	private static Hashtable<String, String> userAndPassword;
 	
 	public static ArrayList<User> getClientsPool() {
-//		if (clientsPool == null) {
-//			clientsPool = new ArrayList<User>(); System.out.println("NEW");
-//		}
 		return clientsPool;
 	}
 	
@@ -53,8 +49,6 @@ public class Server {
 	public static void main(String[] args) {
 		try {
 			ServerSocket serverSocket = new ServerSocket(9000);
-//			clientsPool = new ArrayList<User>();
-//			System.out.println(clientsPool == null);
 			while (true) {
 				System.out.print(clientsPool == null); System.out.println(" SIZE " + clientsPool.size()); 
 				System.out.println("Waiting for connecting....");
@@ -62,10 +56,6 @@ public class Server {
 				System.out.println("Creating one connection with socket : " + socket.getInetAddress() + "/" + socket.getPort());
 				ServerThread serverThread = new ServerThread(socket);
 				serverThread.start();
-//				System.out.println("Socket info: ");
-//				for (int i =0; i < clientsPool.size(); i++) {
-//					System.out.println(clientsPool.get(i).getUserName());
-//				}
 			}
 		} catch (IOException e) {
 			System.out.println("Server down!");

@@ -43,7 +43,6 @@ public class ServerThread extends Thread{
 	public void run() {
 		while (true) {
 			try {
-//				if (in == null) return;
 				String msg = in.readLine();
 				if (msg == null) {
 					return;
@@ -52,12 +51,6 @@ public class ServerThread extends Thread{
 					if (isLoginCheck) {  // Login, msg is the user name
 						User user = new User(socket,msg);
 						Server.getClientsPool().add(user);   // Add this login user to pool
-						System.out.println("ccccccc " + Server.getClientsPool() == null);
-System.out.println("ADD POOL SIZE " + Server.getClientsPool().size());
-//						System.out.println("Socket info: ");
-//						for (int i =0; i < Server.getClientsPool().size(); i++) {
-//							System.out.println(Server.getClientsPool().get(i).getSocket().getInetAddress() + "/" + Server.getClientsPool().get(i).getSocket().getPort() + " : " + Server.getClientsPool().get(i).getSocket().isClosed());
-//						}
 						
 						out.println("UserList " + Server.getLoginUserList());
 						out.flush();

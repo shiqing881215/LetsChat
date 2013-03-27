@@ -102,14 +102,6 @@ public class SecurityUtil {
 	 *         true --- already login user, this user cannot duplicatly login
 	 */
 	public static boolean checkLoggingUser(String userName) {
-		System.out.println("User info: " + userName);
-		System.out.println(Server.getClientsPool() == null);
-//		System.out.println("POOL SIZE " + Server.getClientsPool().size());
-		for (int i =0; i < Server.getClientsPool().size(); i++) {
-			System.out.println(Server.getClientsPool().get(i).getUserName());
-		}
-
-		
 		for (User user : Server.getClientsPool()) {
 			if (user.getUserName().equals(userName)) {
 				return true;
