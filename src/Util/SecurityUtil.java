@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+//import Function.ActiveUserPool;
 import Function.Server;
 import Function.User;
 
@@ -55,12 +56,16 @@ public class SecurityUtil {
 				} else {
 					index = line.indexOf(' ');
 					if (line.substring(0, index).equals(userName)) {
-						if (Integer.parseInt(line.substring(index+1)) == pwd.hashCode()) {  
-							if (!checkLoggingUser(userName)) {
-								return 3; // All match, no login
-							} else {
-								return 2; // Already login
-							}
+						if (Integer.parseInt(line.substring(index+1)) == pwd.hashCode()) { 
+//							ActiveUserPool activeUserPool = ActiveUserPool.getActiveUserPool();
+//							if (!activeUserPool.isUserActive(userName)) {
+//								System.out.println("there");
+//								return 3; // All match, no login
+//							} else {
+//								System.out.println("here");
+//								return 2; // Already login
+//							}
+							return 3;
 						} else {
 							return 1;  // Pwd error
 						}

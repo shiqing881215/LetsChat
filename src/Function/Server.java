@@ -50,7 +50,6 @@ public class Server {
 		try {
 			ServerSocket serverSocket = new ServerSocket(9000);
 			while (true) {
-				System.out.print(clientsPool == null); System.out.println(" SIZE " + clientsPool.size()); 
 				System.out.println("Waiting for connecting....");
 				Socket socket = serverSocket.accept();
 				System.out.println("Creating one connection with socket : " + socket.getInetAddress() + "/" + socket.getPort());

@@ -120,6 +120,10 @@ public class Client implements ActionListener{
 				try {
 					System.out.println("Logout");
 					out.println("Logout " + socket.getLocalPort());  // "Logout socketport"
+					
+//					ActiveUserPool activeUserPool = ActiveUserPool.getActiveUserPool();
+//					activeUserPool.removeUser(frame.getTitle());
+					
 					out.flush();
 					socket.close();
 					frame.dispose();

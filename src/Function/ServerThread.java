@@ -48,9 +48,13 @@ public class ServerThread extends Thread{
 					return;
 				} else {
 					// Check whether it's login process and send the login user list
-					if (isLoginCheck) {  // Login, msg is the user name
+					if (isLoginCheck) {  // The first msg must be the login msg, which is the user name
 						User user = new User(socket,msg);
 						Server.getClientsPool().add(user);   // Add this login user to pool
+
+						// Add login user into pool
+//						ActiveUserPool activeUserPool = ActiveUserPool.getActiveUserPool();
+//						activeUserPool.addUser(msg);
 						
 						out.println("UserList " + Server.getLoginUserList());
 						out.flush();
