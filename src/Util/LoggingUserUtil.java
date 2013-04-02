@@ -52,7 +52,6 @@ public class LoggingUserUtil {
 			BufferedReader reader = new BufferedReader(fileReader);
 			
 			boolean eof = false;
-			int index;
 			while (!eof) {
 				String line = reader.readLine();
 				if (line == null) {

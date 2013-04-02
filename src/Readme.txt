@@ -32,3 +32,16 @@ Tricks:
 1. User input validation.
 2. Some situation, eg. same user login twice.
 3. Add private chat function
+
+
+Patch Version:
+Spend too much time on the checking the logging user.
+Try to use the singleton pattern, however, it involves a lot of issues about synchronization.
+Cannot still set it down. 
+ActiveUserPool and LoggingUserUtil is the file to implement this feature. Need to take a serious consideration of the multi-thread scenario.
+Original checking update user list may also have some problem. Need to verify in the future. 
+Skip this step now, may come back in the future.  04/01/2013
+
+
+Version 4
+
