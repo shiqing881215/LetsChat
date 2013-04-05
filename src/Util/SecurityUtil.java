@@ -65,17 +65,17 @@ public class SecurityUtil {
 //								System.out.println("here");
 //								return 2; // Already login
 //							}
-							return 3;
+							return SecurityUtilEnum.LOGIN_SUCCESSFUL.getValue();
 						} else {
-							return 1;  // Pwd error
+							return SecurityUtilEnum.LOGIN_PASSWORD_ERROR.getValue();  // Pwd error
 						}
 					}
 				}
 			}
-			return 0; // No such user
+			return SecurityUtilEnum.LOGIN_NO_USER.getValue(); // No such user
 		} catch (IOException e) {
 			System.out.println("Validate exception!");
-			return 0;
+			return SecurityUtilEnum.LOGIN_EXCEPTION.getValue();
 		}
 	}
 	
@@ -91,12 +91,12 @@ public class SecurityUtil {
 	public static int checkRegister(String userName, String password, String confirmPassword) {
 		setPath();
 		if (!password.equals(confirmPassword)) {
-			return 0;
+			return SecurityUtilEnum.REGISTER_PASSWORD_ERROR.getValue();
 		} else if (checkExistingUserName(userName)) {
-			return 1;
+			return SecurityUtilEnum.REGISTER_EXISTED_USERNAME.getValue();
 		} else {
 			register(userName, password);
-			return 2;
+			return SecurityUtilEnum.REGISTER_SUCCESSFUL.getValue();
 		}
 	}
 	

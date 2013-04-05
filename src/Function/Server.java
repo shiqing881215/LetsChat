@@ -1,5 +1,6 @@
 package Function;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -56,8 +57,11 @@ public class Server {
 				ServerThread serverThread = new ServerThread(socket);
 				serverThread.start();
 			}
-		} catch (IOException e) {
-			System.out.println("Server down!");
+		} catch (BindException bindException) {
+			System.out.println("Address already in use, please make sure all previous server is closed.");
+			System.out.println("Server not start.");
+		} catch (IOException ioException) {
+			System.out.println("IOException");
 		}
 	}
 }

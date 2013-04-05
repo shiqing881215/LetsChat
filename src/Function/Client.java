@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
 import Util.Protocol;
+import Util.ProtocolEnum;
 import Util.SecurityUtil;
 
 /**
@@ -181,7 +182,7 @@ public class Client implements ActionListener{
 				int returnCode = Protocol.proceed(msg);
 				msg = msg.replaceAll("%20", "\n");
 
-				if (returnCode == 0) {  // Update user list
+				if (returnCode == ProtocolEnum.USERLIST.getValue()) {  // Update user list
 					msg = msg.substring(9);  // remove the tag "userList"
 					userListTextArea.setText(msg);
 				} else {  // Update chat box
@@ -204,6 +205,8 @@ public class Client implements ActionListener{
 	 * Send(chat message)
 	 */
 	public void actionPerformed(ActionEvent evt) {
+		PrivateChatThread p = new PrivateChatThread(out,in);
+		p.start();
 		if (evt.getSource() == loginButton) {
 			int loginRetCode = SecurityUtil.checkLogin(userNameTextField.getText(), pwdTextField.getText());
 			System.out.println("code:" + loginRetCode);

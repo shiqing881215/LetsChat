@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import Util.Protocol;
+import Util.ProtocolEnum;
 
 /**
  * 
@@ -61,10 +62,10 @@ public class ServerThread extends Thread{
 						isLoginCheck = false;
 					} else {
 						int returnCode = Protocol.proceed(msg);
-						if (returnCode == 1) {   // If it's the update request
+						if (returnCode == ProtocolEnum.UPDATE.getValue()) {   // If it's the update request
 							out.println("UserList " + Server.getLoginUserList());
 							out.flush();
-						} else if (returnCode == 2) {  // If it's logout request
+						} else if (returnCode == ProtocolEnum.LOGOUT.getValue()) {  // If it's logout request
 							int port = Integer.parseInt(msg.substring(7));
 							Server.removeUser(port);
 						} else {   // If it's chat request
