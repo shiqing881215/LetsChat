@@ -15,18 +15,21 @@ import javax.swing.JTextArea;
 public class PrivateChatFrame extends JFrame implements ActionListener{
 	private PrintWriter out;
 	private BufferedReader in;
+	private String chatWithUsername;
 	
 	private JButton sendButton;
 	private JTextArea receiveTextArea, sendTextAre;
 	
-	public PrivateChatFrame(PrintWriter out, BufferedReader in) {
-		init();
+	public PrivateChatFrame(PrintWriter out, BufferedReader in, String chatWithUsername) {
+		this.chatWithUsername = chatWithUsername;
 		this.out = out;
 		this.in = in;
+		init();
 		receive();
 	}
 	
 	public void init() {
+		this.setTitle("Talking with " + chatWithUsername);  // Set the title to "Talking with somebody"
 		this.setSize(400, 400);
 		JPanel panel = new JPanel();
 		receiveTextArea = new JTextArea(10,30);

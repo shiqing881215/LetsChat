@@ -44,4 +44,10 @@ Skip this step now, may come back in the future.  04/01/2013
 
 
 Version 4
+Version 4.1
+1.Add ProtocolEnum and SecurityEnum class. Avoid using any magic number.
+2.Add PrivateChatFrame and PrivateChatThread
+  PrivateChatFrame is used to show the person-to-person chat window.
+  PrivateChatThread is used to run PrivateChatFrame.
+  Not done yes, just some basic function. Need to improve.
 

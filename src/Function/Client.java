@@ -36,9 +36,10 @@ import Util.SecurityUtil;
 public class Client implements ActionListener{
 	private JFrame frame;
 	private JPanel loginPanel, chatPanel;
-	private JTextField sendTextField, userNameTextField, pwdTextField, registerUserNameTextField, registerPwdTextField, registerConfirmPwdTextField;
+	private JTextField sendTextField, userNameTextField, pwdTextField, 
+		registerUserNameTextField, registerPwdTextField, registerConfirmPwdTextField, privateChatNameTextField;
 	private JTextArea chatTextArea, userListTextArea;
-	private JButton sendButton, loginButton, registerButton;
+	private JButton sendButton, loginButton, registerButton, startPrivateChatButton;
 	
 	private Socket socket;
 	private PrintWriter out;
@@ -75,8 +76,11 @@ public class Client implements ActionListener{
 
 		// Chat components
 		sendTextField = new JTextField(10);
+		privateChatNameTextField = new JTextField(10);
 		sendButton = new JButton("send");
 		sendButton.addActionListener(this);
+		startPrivateChatButton = new JButton("Start private chat");
+		startPrivateChatButton.addActionListener(this);
 		chatTextArea = new JTextArea(20,30);
 		chatTextArea.setEditable(false);
 		JScrollPane chatScroller = new JScrollPane(chatTextArea);
@@ -104,6 +108,8 @@ public class Client implements ActionListener{
 		chatPanel.add(sendButton);
 		chatPanel.add(sendTextField);
 		chatPanel.add(usreListScroller);
+		chatPanel.add(privateChatNameTextField);
+		chatPanel.add(startPrivateChatButton);
 		
 //		frame.getContentPane().add(new JScrollPane(textArea)); 
 //		frame.getContentPane().add(textField,"South");
@@ -205,8 +211,6 @@ public class Client implements ActionListener{
 	 * Send(chat message)
 	 */
 	public void actionPerformed(ActionEvent evt) {
-		PrivateChatThread p = new PrivateChatThread(out,in);
-		p.start();
 		if (evt.getSource() == loginButton) {
 			int loginRetCode = SecurityUtil.checkLogin(userNameTextField.getText(), pwdTextField.getText());
 			System.out.println("code:" + loginRetCode);
@@ -282,6 +286,10 @@ public class Client implements ActionListener{
 				registerErrorFrame.setContentPane(registerErrorPanel);
 				registerErrorFrame.setVisible(true);
 			}
+		}
+		if (evt.getSource() == startPrivateChatButton) {
+			PrivateChatThread p = new PrivateChatThread(out,in, privateChatNameTextField.getText());
+			p.start();
 		}
 		if (evt.getSource() == sendButton) {
 			// Send button send the message 
