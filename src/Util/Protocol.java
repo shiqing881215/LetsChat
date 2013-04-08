@@ -8,6 +8,8 @@ public class Protocol {
 			return ProtocolEnum.UPDATE.getValue();
 		} else if (msg.length() >= 6 && msg.substring(0, 6).equals("Logout")) {  // To server, request for logout
 			return ProtocolEnum.LOGOUT.getValue();
+		} else if (msg.substring(0, 11).equals("PrivateChat")) {
+			return ProtocolEnum.PRIVATECHAT.getValue();
 		}
 		return 100;
 	}

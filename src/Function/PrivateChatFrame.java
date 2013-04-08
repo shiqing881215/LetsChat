@@ -12,6 +12,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+/**
+ * Frame class to support the UI for person-to-person chat
+ * @author Qing Shi
+ *
+ */
 public class PrivateChatFrame extends JFrame implements ActionListener{
 	private PrintWriter out;
 	private BufferedReader in;
@@ -48,7 +53,13 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		sendTextAre.setText("hello");
+//		sendTextAre.setText("hello");
+		if (evt.getSource() == sendButton) {
+			String msg = receiveTextArea.getText();
+			msg = "PrivateChat " + chatWithUsername + " " + msg;
+			out.println(msg);
+			out.flush();
+		}
 	}
 	
 	public void receive() {

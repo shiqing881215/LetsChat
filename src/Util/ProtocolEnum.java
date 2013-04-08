@@ -3,7 +3,8 @@ package Util;
 public enum ProtocolEnum {
 	USERLIST(0),
 	UPDATE(1),
-	LOGOUT(2);
+	LOGOUT(2),
+	PRIVATECHAT(3);
 	
 	private int value;
 	

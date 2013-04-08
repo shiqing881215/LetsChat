@@ -3,6 +3,11 @@ package Function;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 
+/**
+ * Thread class used to run the PrivateChatFrame to start a person-to-person chat
+ * @author Qing Shi
+ *
+ */
 public class PrivateChatThread extends Thread{
 	private PrintWriter out;
 	private BufferedReader in;

@@ -24,6 +24,30 @@ public class ServerThread extends Thread{
 	private PrintWriter out;
 	private boolean isLoginCheck = true;
 	
+	public Socket getSocket() {
+		return socket;
+	}
+
+	public void setSocket(Socket socket) {
+		this.socket = socket;
+	}
+
+	public BufferedReader getIn() {
+		return in;
+	}
+
+	public void setIn(BufferedReader in) {
+		this.in = in;
+	}
+
+	public PrintWriter getOut() {
+		return out;
+	}
+
+	public void setOut(PrintWriter out) {
+		this.out = out;
+	}
+
 	/**
 	 * Initial in and out stream based on the connection socket.
 	 * @param s --- the connected socket.
@@ -68,6 +92,13 @@ public class ServerThread extends Thread{
 						} else if (returnCode == ProtocolEnum.LOGOUT.getValue()) {  // If it's logout request
 							int port = Integer.parseInt(msg.substring(7));
 							Server.removeUser(port);
+						} else if (returnCode == ProtocolEnum.PRIVATECHAT.getValue()) {
+							Pair<String, String> usernameAndMsg = PrivateChatUtil.getUserNameAndMsg(msg);
+							String username = usernameAndMsg.getFirstElement();
+							String message = usernameAndMsg.getSecondElement();
+							PrintWriter chatTargetOut = Server.getChatTargetOut(username);
+							out.println(message);
+							out.flush();
 						} else {   // If it's chat request
 							SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss");
 							out.println("server " + formatter.format(new Date()) + "%20" + msg + socket.getInetAddress()+"/"+socket.getPort());

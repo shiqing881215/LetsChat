@@ -1,10 +1,10 @@
 package Function;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-//import java.util.Hashtable;
 
 /**
  * 
@@ -14,6 +14,7 @@ import java.util.ArrayList;
  */
 public class Server {
 	private static ArrayList<User> clientsPool = new ArrayList<User>();
+	private static ArrayList<ServerThread> serverThreadsPool = new ArrayList<ServerThread>();  // Holding all ServerThread used for private chat
 	
 	public static ArrayList<User> getClientsPool() {
 		return clientsPool;
@@ -46,6 +47,49 @@ public class Server {
 		}
 		clientsPool.remove(index);
 	}
+	
+	/**
+	 * Given a username, return the user.
+	 * @param userName
+	 * @return
+	 */
+	public static User getUser(String userName) {
+		User user = null;
+		for (int i = 0; i < clientsPool.size(); i++) {
+			if (clientsPool.get(i).getUserName().equals(userName)) {
+				user = clientsPool.get(i);
+				return user;
+			}
+		}
+		return user;
+	}
+	
+	/**
+	 * Given a socket, find the bound ServerSocket with this socket
+	 * @param socket
+	 * @return
+	 */
+	public static ServerThread getServerThread(Socket socket) {
+		for (int i = 0; i < serverThreadsPool.size(); i++) {
+			if (serverThreadsPool.get(i).getSocket() == socket) {
+				return serverThreadsPool.get(i);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Given a targer user name, get the out strem to that user, so that can establish the private chat channel
+	 * @param userName --- Chat target user name
+	 */
+	public static PrintWriter getChatTargetOut(String userName) {
+		User user = getUser(userName);
+		if (user == null) return null;
+		Socket socket = user.getSocket();
+		ServerThread serverThread = getServerThread(socket);
+		if (serverThread == null) return null;
+		return serverThread.getOut();
+	}
 
 	public static void main(String[] args) {
 		try {
@@ -55,6 +99,7 @@ public class Server {
 				Socket socket = serverSocket.accept();
 				System.out.println("Creating one connection with socket : " + socket.getInetAddress() + "/" + socket.getPort());
 				ServerThread serverThread = new ServerThread(socket);
+				serverThreadsPool.add(serverThread);   // Add the new ServerThread to the serverThreadsPool
 				serverThread.start();
 			}
 		} catch (BindException bindException) {
