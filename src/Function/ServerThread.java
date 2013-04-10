@@ -9,6 +9,8 @@ import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import Util.Pair;
+import Util.PrivateChatUtil;
 import Util.Protocol;
 import Util.ProtocolEnum;
 
@@ -94,11 +96,11 @@ public class ServerThread extends Thread{
 							Server.removeUser(port);
 						} else if (returnCode == ProtocolEnum.PRIVATECHAT.getValue()) {
 							Pair<String, String> usernameAndMsg = PrivateChatUtil.getUserNameAndMsg(msg);
-							String username = usernameAndMsg.getFirstElement();
-							String message = usernameAndMsg.getSecondElement();
+							String username = usernameAndMsg.getFirst();
+							String message = usernameAndMsg.getSecond();
 							PrintWriter chatTargetOut = Server.getChatTargetOut(username);
-							out.println(message);
-							out.flush();
+							chatTargetOut.println(message);
+							chatTargetOut.flush();
 						} else {   // If it's chat request
 							SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss");
 							out.println("server " + formatter.format(new Date()) + "%20" + msg + socket.getInetAddress()+"/"+socket.getPort());

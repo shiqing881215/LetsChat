@@ -16,9 +16,7 @@ public class PrivateChatUtil {
 		int blankTwoIndex = info.substring(blankOneIndex+1).indexOf(' ') + blankOneIndex + 1;
 		String userName = info.substring(blankOneIndex+1, blankTwoIndex);
 		String msg = info.substring(blankTwoIndex+1);
-		Pair<String, String> pair = new Pair<String, String>();
-		pair.addFirstElement(userName);
-		pair.addSecondElement(msg);
+		Pair<String, String> pair = new Pair<String, String>(userName, msg);
 		return pair;
 	}
 }

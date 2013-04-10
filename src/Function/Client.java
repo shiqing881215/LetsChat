@@ -25,6 +25,7 @@ import javax.swing.ScrollPaneConstants;
 import Util.Protocol;
 import Util.ProtocolEnum;
 import Util.SecurityUtil;
+import Util.SecurityUtilEnum;
 
 /**
  * 
@@ -214,7 +215,7 @@ public class Client implements ActionListener{
 		if (evt.getSource() == loginButton) {
 			int loginRetCode = SecurityUtil.checkLogin(userNameTextField.getText(), pwdTextField.getText());
 			System.out.println("code:" + loginRetCode);
-			if (loginRetCode == 3) {
+			if (loginRetCode == SecurityUtilEnum.LOGIN_SUCCESSFUL.getValue()) {
 				this.userName = userNameTextField.getText();
 				frame.setTitle(userName);
 				frame.setContentPane(chatPanel);
@@ -226,9 +227,9 @@ public class Client implements ActionListener{
 				cuut.start();
 			} else {
 				String loginErrMsg;
-				if (loginRetCode == 2) {
+				if (loginRetCode == SecurityUtilEnum.LOGIN_USER_ALREADY_LOGIN.getValue()) {
 					loginErrMsg = "This user already login!";
-				} else if (loginRetCode == 1) {
+				} else if (loginRetCode == SecurityUtilEnum.LOGIN_PASSWORD_ERROR.getValue()) {
 					loginErrMsg = "Password error!";
 				} else {
 					loginErrMsg = "No such user!";
