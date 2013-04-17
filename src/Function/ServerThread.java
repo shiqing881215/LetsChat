@@ -87,19 +87,20 @@ public class ServerThread extends Thread{
 						out.flush();
 						isLoginCheck = false;
 					} else {
-						int returnCode = Protocol.proceed(msg);
+						int returnCode = Protocol.proceed(msg);System.out.println("RETURN CODE : " + returnCode);
 						if (returnCode == ProtocolEnum.UPDATE.getValue()) {   // If it's the update request
 							out.println("UserList " + Server.getLoginUserList());
 							out.flush();
 						} else if (returnCode == ProtocolEnum.LOGOUT.getValue()) {  // If it's logout request
 							int port = Integer.parseInt(msg.substring(7));
 							Server.removeUser(port);
-						} else if (returnCode == ProtocolEnum.PRIVATECHAT.getValue()) {
+						} else if (returnCode == ProtocolEnum.PRIVATE_CHAT_TO_SERVER.getValue()) {
+							System.out.println("GET PRIVATE CHAT MESSAGE!");
 							Pair<String, String> usernameAndMsg = PrivateChatUtil.getUserNameAndMsg(msg);
 							String username = usernameAndMsg.getFirst();
 							String message = usernameAndMsg.getSecond();
 							PrintWriter chatTargetOut = Server.getChatTargetOut(username);
-							chatTargetOut.println(message);
+							chatTargetOut.println("PrivateChatToClient " + message);
 							chatTargetOut.flush();
 						} else {   // If it's chat request
 							SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss");

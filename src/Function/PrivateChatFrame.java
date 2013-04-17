@@ -12,6 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import Util.Protocol;
+import Util.ProtocolEnum;
+
 /**
  * Frame class to support the UI for person-to-person chat
  * @author Qing Shi
@@ -23,7 +26,7 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 	private String chatWithUsername;
 	
 	private JButton sendButton;
-	private JTextArea receiveTextArea, sendTextAre;
+	private JTextArea receiveTextArea, sendTextArea;
 	
 	public PrivateChatFrame(PrintWriter out, BufferedReader in, String chatWithUsername) {
 		this.chatWithUsername = chatWithUsername;
@@ -39,9 +42,9 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 		JPanel panel = new JPanel();
 		receiveTextArea = new JTextArea(10,30);
 		receiveTextArea.setEditable(false);
-		sendTextAre = new JTextArea(10,30);
+		sendTextArea = new JTextArea(10,30);
 		JScrollPane receiveScroller = new JScrollPane(receiveTextArea);
-		JScrollPane sendScroller = new JScrollPane(sendTextAre);
+		JScrollPane sendScroller = new JScrollPane(sendTextArea);
 		sendButton = new JButton("send");
 		sendButton.addActionListener(this);
 		panel.add(receiveScroller);
@@ -53,12 +56,13 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-//		sendTextAre.setText("hello");
+		// Send private chat message to the server first
 		if (evt.getSource() == sendButton) {
-			String msg = receiveTextArea.getText();
-			msg = "PrivateChat " + chatWithUsername + " " + msg;
+			String msg = sendTextArea.getText();
+			msg = "PrivateChatToServer " + chatWithUsername + " " + msg;
 			out.println(msg);
 			out.flush();
+			sendTextArea.setText("");
 		}
 	}
 	
@@ -66,10 +70,29 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 		while(true) {
 			try {
 				String msg = in.readLine();
-				receiveTextArea.append(msg);
+				int returnCode = Protocol.proceed(msg);
+				if (isPrivateChatMessage(msg) && returnCode == ProtocolEnum.PRIVATE_CHAT_TO_CLIENT.getValue()) {
+					receiveTextArea.append(msg.substring(20) + "\n");  // remove "PrivateChatToClient" prefix
+				}
 			} catch (IOException e) {
 				return;
 			}
+		}
+	}
+	
+	/**
+	 * Check whether this is a private chat message.
+	 * Filter the updaet list noise message.
+	 * @param msg
+	 * @return
+	 */
+	public boolean isPrivateChatMessage(String msg) {
+		if (msg.length() <= 8) return true;
+		String header = msg.substring(0, 8);
+		if (header.equals("UserList")) {
+			return false;
+		} else {
+			return true;
 		}
 	}
 }

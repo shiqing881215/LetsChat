@@ -192,7 +192,7 @@ public class Client implements ActionListener{
 				if (returnCode == ProtocolEnum.USERLIST.getValue()) {  // Update user list
 					msg = msg.substring(9);  // remove the tag "userList"
 					userListTextArea.setText(msg);
-				} else {  // Update chat box
+				} else if (returnCode == 100){  // Update chat box
 					chatTextArea.append("\n" + msg);
 				}
 			} catch (SocketException socketException) {
