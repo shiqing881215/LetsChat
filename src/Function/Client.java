@@ -165,17 +165,18 @@ public class Client implements ActionListener{
 //	}
 	
 	/**
-	 * Send message to server.
+	 * Send group message to server.
 	 */
 	public void send() {
 		String msg = sendTextField.getText();
 		sendTextField.setText("");
-		out.println(msg);
 		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss"); 
 		if (chatTextArea.getText().length() != 0) { // not the first time send, message in another line
 			chatTextArea.append("\n");
 		}
 		chatTextArea.append(userName + " " + formatter.format(new Date()) + ":\n" + msg);
+		msg = "Group " + userName + " " + msg;  // Group message  eg: "Group sq hello"
+		out.println(msg);
 		out.flush();
 	}
 	
@@ -192,8 +193,20 @@ public class Client implements ActionListener{
 				if (returnCode == ProtocolEnum.USERLIST.getValue()) {  // Update user list
 					msg = msg.substring(9);  // remove the tag "userList"
 					userListTextArea.setText(msg);
-				} else if (returnCode == 100){  // Update chat box
-					chatTextArea.append("\n" + msg);
+				} else if (returnCode == ProtocolEnum.GROUP.getValue()){  // Group message : "Group sq hello"
+					SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+					int indexOfFirstSpace = msg.indexOf(' ');
+					int indexOfSecondSpace = msg.substring(indexOfFirstSpace+1).indexOf(' ') + indexOfFirstSpace + 1;
+					String user = msg.substring(indexOfFirstSpace+1, indexOfSecondSpace);
+					String message = msg.substring(indexOfSecondSpace+1);
+					StringBuilder sb = new StringBuilder();
+					if (chatTextArea.getText().length() != 0) { // not the first time, message in another line
+						chatTextArea.append("\n");
+					}
+					sb.append(user + " ");
+					sb.append(formatter.format(new Date()) + "\n");
+					sb.append(message);
+					chatTextArea.append(sb.toString());
 				}
 			} catch (SocketException socketException) {
 				System.out.println("This client has logged out.");

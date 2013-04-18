@@ -12,7 +12,9 @@ public class Protocol {
 			return ProtocolEnum.PRIVATE_CHAT_TO_SERVER.getValue();
 		} else if (msg.length() >= 19 && msg.substring(0, 19).equals("PrivateChatToClient")) {  // To client, resend the private chat message to target client
 			return ProtocolEnum.PRIVATE_CHAT_TO_CLIENT.getValue();
-		} 
-		return 100; // Group chat
+		} else if (msg.length() >= 5 && msg.substring(0, 5).equals("Group")) {
+			return ProtocolEnum.GROUP.getValue();
+		}
+		return 101; // Group chat
 	}
 }

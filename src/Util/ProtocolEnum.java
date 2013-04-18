@@ -5,7 +5,8 @@ public enum ProtocolEnum {
 	UPDATE(1),
 	LOGOUT(2),
 	PRIVATE_CHAT_TO_SERVER(3),
-	PRIVATE_CHAT_TO_CLIENT(4);
+	PRIVATE_CHAT_TO_CLIENT(4),
+	GROUP(100);
 	
 	private int value;
 	

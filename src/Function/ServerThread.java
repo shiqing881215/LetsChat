@@ -5,9 +5,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
-//import java.util.ArrayList;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 
 import Util.Pair;
 import Util.PrivateChatUtil;
@@ -102,10 +100,17 @@ public class ServerThread extends Thread{
 							PrintWriter chatTargetOut = Server.getChatTargetOut(username);
 							chatTargetOut.println("PrivateChatToClient " + message);  // This message include the fromUser and message, eg: "qs hello"
 							chatTargetOut.flush();
-						} else {   // If it's chat request
-							SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss");
-							out.println("server " + formatter.format(new Date()) + "%20" + msg + socket.getInetAddress()+"/"+socket.getPort());
-							out.flush();
+						} else if (returnCode == ProtocolEnum.GROUP.getValue()){   // Group message : "Group sq hello", add nothing here just forward to other users.
+//							SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+//							out.println("server " + formatter.format(new Date()) + "%20" + msg + socket.getInetAddress()+"/"+socket.getPort());
+							
+							// Get all other users and forward the message
+							String sendUsername = msg.substring(6, msg.substring(6).indexOf(' ')+6);   System.out.println("SEND USER " + sendUsername);
+							ArrayList<PrintWriter> others = Server.notifyGroupMessage(sendUsername);
+							for (PrintWriter other : others) {
+								other.println(msg);
+								other.flush();
+							}
 						}
 					}
 				}

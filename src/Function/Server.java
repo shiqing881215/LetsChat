@@ -34,6 +34,23 @@ public class Server {
 	}
 	
 	/**
+	 * Notify all other group message receiveer.
+	 * @param username --- group message sender
+	 * @return All other receivers' output stream
+	 */
+	public static ArrayList<PrintWriter> notifyGroupMessage(String username) {
+		ArrayList<PrintWriter> others = new ArrayList<PrintWriter>();
+		for (int i = 0; i < clientsPool.size(); i++) {
+			String otherName = clientsPool.get(i).getUserName();
+			if (!otherName.equals(username)) {
+				others.add(getChatTargetOut(otherName));
+			}
+		}
+		System.out.println("SIZE " + others.size());
+		return others;
+	}
+	
+	/**
 	 * Given a username, check whether this user is login
 	 * @param userName
 	 * @return true --- login
