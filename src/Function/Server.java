@@ -34,6 +34,35 @@ public class Server {
 	}
 	
 	/**
+	 * Given a username, check whether this user is login
+	 * @param userName
+	 * @return true --- login
+	 *         false --- not
+	 */
+	public static boolean isALoginUser(String userName) {
+		if (userName == null || userName.length() == 0) return false;
+		
+//		System.out.println("SIZE " + clientsPool.size());
+//		for (int i = 0; i < clientsPool.size(); i++) {
+//			System.out.println("NAME " + clientsPool.get(i).getUserName());
+//			if (clientsPool.get(i).getUserName().equals(userName)) {
+//				return true;
+//			}
+//		}
+		
+		
+//		String userList = getLoginUserList();
+//		System.out.println("THERERER " + userList);
+//		String[] list = userList.split("%20");
+//		System.out.println("SIZE " + list.length);
+//		System.out.println("SIZE2 " + list[0]);
+//		for (int i = 0; i < list.length; i++) {
+//			if (list[i].equals(userName)) return true;
+//		}
+		return false;
+	}
+	
+	/**
 	 * Remove the logout user information
 	 * @param port --- The port of socket which should be removed
 	 */

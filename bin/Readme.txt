@@ -49,5 +49,12 @@ Version 4.1
 2.Add PrivateChatFrame and PrivateChatThread
   PrivateChatFrame is used to show the person-to-person chat window.
   PrivateChatThread is used to run PrivateChatFrame.
-  Not done yes, just some basic function. Need to improve.
-
+  Not done yet, just some basic function. Need to improve.
+Version 4.2
+Finish basic private chat function. One user start the private chat window, the other user start the same window, so they can private chat.
+Server handle the private chat message and forward to the target user.
+---------TO DO LIST:
+1. Add a private chat remind window, so no need to start a window by user himself and make more sense.
+2. Change the original "stupid" server reply to the group chat function.
+3. Bug --- enter some user which doesn't exist. 
+   Seems that the problem is ServerThread can get the correct clientsPool but client can never get it.

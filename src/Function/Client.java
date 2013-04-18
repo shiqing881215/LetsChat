@@ -171,7 +171,7 @@ public class Client implements ActionListener{
 		String msg = sendTextField.getText();
 		sendTextField.setText("");
 		out.println(msg);
-		SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss"); 
+		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss"); 
 		if (chatTextArea.getText().length() != 0) { // not the first time send, message in another line
 			chatTextArea.append("\n");
 		}
@@ -289,8 +289,14 @@ public class Client implements ActionListener{
 			}
 		}
 		if (evt.getSource() == startPrivateChatButton) {
-			PrivateChatThread p = new PrivateChatThread(out,in, privateChatNameTextField.getText());
-			p.start();
+			// TODO error handling (similar issue with checking same user login twice --- server.clientsPool is empty)
+			String targetUserName = privateChatNameTextField.getText();
+//			if (Server.isALoginUser(userName)) {
+				PrivateChatThread p = new PrivateChatThread(out,in, targetUserName, userName);
+				p.start();
+//			} else {
+//				 TODO Add corresponding error panel here
+//			}
 		}
 		if (evt.getSource() == sendButton) {
 			// Send button send the message 

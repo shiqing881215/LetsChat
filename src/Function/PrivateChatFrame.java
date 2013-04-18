@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,14 +26,16 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 	private PrintWriter out;
 	private BufferedReader in;
 	private String chatWithUsername;
+	private String myUsername;
 	
 	private JButton sendButton;
 	private JTextArea receiveTextArea, sendTextArea;
 	
-	public PrivateChatFrame(PrintWriter out, BufferedReader in, String chatWithUsername) {
-		this.chatWithUsername = chatWithUsername;
+	public PrivateChatFrame(PrintWriter out, BufferedReader in, String chatWithUsername, String myUsername) {
 		this.out = out;
 		this.in = in;
+		this.chatWithUsername = chatWithUsername;
+		this.myUsername = myUsername;
 		init();
 		receive();
 	}
@@ -59,7 +63,12 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 		// Send private chat message to the server first
 		if (evt.getSource() == sendButton) {
 			String msg = sendTextArea.getText();
-			msg = "PrivateChatToServer " + chatWithUsername + " " + msg;
+			SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss"); 
+			if (receiveTextArea.getText().length() != 0) { // not the first time send, message in another line
+				receiveTextArea.append("\n");
+			}
+			receiveTextArea.append("me " + formatter.format(new Date()) + ":\n" + msg);
+			msg = "PrivateChatToServer " + chatWithUsername + " " +myUsername + " " + msg;
 			out.println(msg);
 			out.flush();
 			sendTextArea.setText("");
@@ -71,8 +80,15 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 			try {
 				String msg = in.readLine();
 				int returnCode = Protocol.proceed(msg);
-				if (isPrivateChatMessage(msg) && returnCode == ProtocolEnum.PRIVATE_CHAT_TO_CLIENT.getValue()) {
-					receiveTextArea.append(msg.substring(20) + "\n");  // remove "PrivateChatToClient" prefix
+				if (isPrivateChatMessage(msg) && returnCode == ProtocolEnum.PRIVATE_CHAT_TO_CLIENT.getValue()) {  // Get message like "PrivateChatToClient sq hello"
+					StringBuilder sb = new StringBuilder();
+					int indexOfFirstSpace = msg.indexOf(' ');
+					int indexOfSecondSpace = msg.substring(indexOfFirstSpace+1).indexOf(' ') + indexOfFirstSpace + 1;
+					sb.append("\n" + msg.substring(indexOfFirstSpace+1,indexOfSecondSpace) + " ");
+					SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss"); 
+					sb.append(formatter.format(new Date()) + ":\n");
+					sb.append(msg.substring(indexOfSecondSpace+1));
+					receiveTextArea.append(sb.toString());  
 				}
 			} catch (IOException e) {
 				return;

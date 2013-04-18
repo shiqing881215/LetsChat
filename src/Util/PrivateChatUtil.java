@@ -7,8 +7,8 @@ package Util;
  */
 public class PrivateChatUtil {
 	/**
-	 * Given the whole receive string, parse it into username and message and store in pair structure.
-	 * Example "PrivateChatToServer sq hello" -> Pair<sq,hello>
+	 * Given the whole receive string, parse it into username and (fromUser + message) and store in pair structure.
+	 * Example "PrivateChatToServer sq lx hello" -> Pair<"sq","lx hello">
 	 * @param info
 	 * @return
 	 */

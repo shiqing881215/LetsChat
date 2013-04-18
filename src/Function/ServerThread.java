@@ -83,14 +83,14 @@ public class ServerThread extends Thread{
 //						ActiveUserPool activeUserPool = ActiveUserPool.getActiveUserPool();
 //						activeUserPool.addUser(msg);
 						
-						out.println("UserList " + Server.getLoginUserList());
+						out.println("UserList " + Server.getLoginUserList()); 
 						out.flush();
 						isLoginCheck = false;
 					} else {
-						int returnCode = Protocol.proceed(msg);System.out.println("RETURN CODE : " + returnCode);
+						int returnCode = Protocol.proceed(msg);//System.out.println("RETURN CODE : " + returnCode);
 						if (returnCode == ProtocolEnum.UPDATE.getValue()) {   // If it's the update request
 							out.println("UserList " + Server.getLoginUserList());
-							out.flush();
+							out.flush();   //System.out.println("HERER " + Server.getLoginUserList());
 						} else if (returnCode == ProtocolEnum.LOGOUT.getValue()) {  // If it's logout request
 							int port = Integer.parseInt(msg.substring(7));
 							Server.removeUser(port);
@@ -100,7 +100,7 @@ public class ServerThread extends Thread{
 							String username = usernameAndMsg.getFirst();
 							String message = usernameAndMsg.getSecond();
 							PrintWriter chatTargetOut = Server.getChatTargetOut(username);
-							chatTargetOut.println("PrivateChatToClient " + message);
+							chatTargetOut.println("PrivateChatToClient " + message);  // This message include the fromUser and message, eg: "qs hello"
 							chatTargetOut.flush();
 						} else {   // If it's chat request
 							SimpleDateFormat   formatter   =   new   SimpleDateFormat("HH:mm:ss");
