@@ -58,3 +58,13 @@ Server handle the private chat message and forward to the target user.
 2. Change the original "stupid" server reply to the group chat function.
 3. Bug --- enter some user which doesn't exist. 
    Seems that the problem is ServerThread can get the correct clientsPool but client can never get it.
+   
+   
+ 
+Version 5
+Version 5.1
+Finish the group chatting function. 
+When a user post something on the group chat box. All other users will see it.
+Core method : notifyGroupMessage --- get all other users' PrintWriter
+TODO:
+Add remind box to show the private chat invitation

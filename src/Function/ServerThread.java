@@ -98,7 +98,7 @@ public class ServerThread extends Thread{
 							String username = usernameAndMsg.getFirst();
 							String message = usernameAndMsg.getSecond();
 							PrintWriter chatTargetOut = Server.getChatTargetOut(username);
-							chatTargetOut.println("PrivateChatToClient " + message);  // This message include the fromUser and message, eg: "qs hello"
+							chatTargetOut.println("PrivateChatToClient " + message);  // This message include the fromUser and message, eg: "PrivateChatToClient qs hello"
 							chatTargetOut.flush();
 						} else if (returnCode == ProtocolEnum.GROUP.getValue()){   // Group message : "Group sq hello", add nothing here just forward to other users.
 //							SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
