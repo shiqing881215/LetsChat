@@ -111,6 +111,14 @@ public class ServerThread extends Thread{
 								other.println(msg);
 								other.flush();
 							}
+						} else if (returnCode == ProtocolEnum.START_PRIVATE_CHAT.getValue()) { // msg : "StartPrivateChatRemind target from"
+							int firstSpaceIndex = msg.indexOf(' ');
+							int secondSpaceIndex = msg.substring(firstSpaceIndex+1).indexOf(' ') + firstSpaceIndex + 1;
+							String targetUsername = msg.substring(firstSpaceIndex+1, secondSpaceIndex);
+							String fromUsername = msg.substring(secondSpaceIndex+1);
+							PrintWriter chatTargetOut = Server.getChatTargetOut(targetUsername);
+							chatTargetOut.println("StartPrivateChatRemind " + fromUsername);  // "StartPrivateChatRemind from"
+							chatTargetOut.flush();
 						}
 					}
 				}

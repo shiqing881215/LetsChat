@@ -68,3 +68,15 @@ When a user post something on the group chat box. All other users will see it.
 Core method : notifyGroupMessage --- get all other users' PrintWriter
 TODO:
 Add remind box to show the private chat invitation
+Version 5.2
+Finish BASIC private chat remind box.
+When a user click start private chat button. His own private chat window and also the target user private chat window will show at the same time.
+Still remain some disgusting bugs. Most of them are validating bugs.
+All basic function done here. The remaining work is focused on the bugs and the code refactoring.
+
+
+
+
+
+
+

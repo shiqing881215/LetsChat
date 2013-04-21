@@ -14,6 +14,8 @@ public class Protocol {
 			return ProtocolEnum.PRIVATE_CHAT_TO_CLIENT.getValue();
 		} else if (msg.length() >= 5 && msg.substring(0, 5).equals("Group")) {
 			return ProtocolEnum.GROUP.getValue();
+		} else if (msg.length() >= 22 && msg.substring(0, 22).equals("StartPrivateChatRemind")) {
+			return ProtocolEnum.START_PRIVATE_CHAT.getValue();
 		}
 		return 101; // Group chat
 	}

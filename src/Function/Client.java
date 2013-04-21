@@ -207,6 +207,10 @@ public class Client implements ActionListener{
 					sb.append(formatter.format(new Date()) + "\n");
 					sb.append(message);
 					chatTextArea.append(sb.toString());
+				} else if (returnCode == ProtocolEnum.START_PRIVATE_CHAT.getValue()){ // msg : "StartPrivateChatRemind target"
+					String targetUserName = msg.substring(msg.indexOf(' ')+1);
+					PrivateChatThread p = new PrivateChatThread(out,in, targetUserName, userName);
+					p.start();
 				}
 			} catch (SocketException socketException) {
 				System.out.println("This client has logged out.");
@@ -307,6 +311,9 @@ public class Client implements ActionListener{
 //			if (Server.isALoginUser(userName)) {
 				PrivateChatThread p = new PrivateChatThread(out,in, targetUserName, userName);
 				p.start();
+				String startPrivateChatRemind = "StartPrivateChatRemind " + targetUserName + " " + userName;
+				out.println(startPrivateChatRemind);
+				out.flush();
 //			} else {
 //				 TODO Add corresponding error panel here
 //			}
