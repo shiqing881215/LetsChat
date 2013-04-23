@@ -1,9 +1,6 @@
 package Function;
-//import java.io.BufferedReader;
-//import java.io.IOException;
-//import java.io.InputStreamReader;
+
 import java.io.PrintWriter;
-//import java.net.Socket;
 
 /**
  * 
@@ -11,16 +8,19 @@ import java.io.PrintWriter;
  * Class used for update the userlist for each client UI on the fly.
  */
 public class ClientUpdateUserlistThread extends Thread{
-	private PrintWriter out;  // This thread only need to send the update request to server. No need to receive anything
+	private PrintWriter out;  // This thread only need to send the update request to server. Client is responsible for receiving and proceeding the info
 	
 	public ClientUpdateUserlistThread(PrintWriter out) {
 		this.out = out;
 	}
 	
+	/**
+	 * Send update request each 5 seconds
+	 */
 	public void run() {
 		while (true) {
 			try {
-				Thread.sleep(5000);    // Each 5 seconds, send update request
+				Thread.sleep(5000);   
 				out.println("Update");
 				out.flush();
 			} catch (InterruptedException e) {

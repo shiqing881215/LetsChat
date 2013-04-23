@@ -7,14 +7,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-//import Function.ActiveUserPool;
 import Function.Server;
 import Function.User;
 
 /**
  * 
  * @author Qing Shi
- * Class for check user login.
+ * Security Util to do the most security check for login and register.
  */
 public class SecurityUtil {
 	private static String path;
@@ -37,7 +36,7 @@ public class SecurityUtil {
 	 * @param pwd
 	 * @return 0 --- No such user
 	 *         1 --- Password error
-	 *         2 --- User already login
+	 *         2 --- User already login --- this one is not checked here, in client 
 	 *         3 --- All good
 	 */
 	public static int checkLogin (String userName, String pwd) {
@@ -57,14 +56,6 @@ public class SecurityUtil {
 					index = line.indexOf(' ');
 					if (line.substring(0, index).equals(userName)) {
 						if (Integer.parseInt(line.substring(index+1)) == pwd.hashCode()) { 
-//							ActiveUserPool activeUserPool = ActiveUserPool.getActiveUserPool();
-//							if (!activeUserPool.isUserActive(userName)) {
-//								System.out.println("there");
-//								return 3; // All match, no login
-//							} else {
-//								System.out.println("here");
-//								return 2; // Already login
-//							}
 							return SecurityUtilEnum.LOGIN_SUCCESSFUL.getValue();
 						} else {
 							return SecurityUtilEnum.LOGIN_PASSWORD_ERROR.getValue();  // Pwd error

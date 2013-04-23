@@ -76,6 +76,23 @@ All basic function done here. The remaining work is focused on the bugs and the 
 
 
 
+Version 6
+Bug fix and code refactor
+1. Validate same user login twice
+2. Validate private chat with a non-existing user
+3. Cannot receive private chat message
+4. Cannot start private chat window for the target user
+
+1. Done --- Add protocol, check it from server side instead of client side.
+
+
+
+
+
+
+
+
+
 
 
 

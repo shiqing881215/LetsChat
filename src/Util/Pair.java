@@ -1,5 +1,16 @@
 package Util;
 
+/**
+ * 
+ * @author Qing Shi
+ *
+ * @param <FirstType>
+ * @param <SecondType>
+ * 
+ * New data structure to hold two kinds type of data.
+ * Used by the private chat.
+ * Using generic to make it more general and flexible.
+ */
 public class Pair<FirstType, SecondType> {
 	public FirstType first;
 	public SecondType second;

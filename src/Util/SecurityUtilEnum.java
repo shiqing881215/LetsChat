@@ -1,5 +1,11 @@
 package Util;
 
+/**
+ * 
+ * @author Qing Shi
+ * Security Enum for the security result value.
+ *
+ */
 public enum SecurityUtilEnum {
 	LOGIN_NO_USER(0),
 	LOGIN_PASSWORD_ERROR(1),

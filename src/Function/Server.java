@@ -10,10 +10,11 @@ import java.util.ArrayList;
  * 
  * @author Qing Shi
  * Class Server
- * Open port for client to connect, always running, send the simple reply message to client directly.
+ * Open port for client to connect, always running.
+ * For each new user, create a new thread to handle the events with this user.
  */
 public class Server {
-	private static ArrayList<User> clientsPool = new ArrayList<User>();
+	private static ArrayList<User> clientsPool = new ArrayList<User>();  // All login user information
 	private static ArrayList<ServerThread> serverThreadsPool = new ArrayList<ServerThread>();  // Holding all ServerThread used for private chat
 	
 	public static ArrayList<User> getClientsPool() {
@@ -58,24 +59,11 @@ public class Server {
 	 */
 	public static boolean isALoginUser(String userName) {
 		if (userName == null || userName.length() == 0) return false;
-		
-//		System.out.println("SIZE " + clientsPool.size());
-//		for (int i = 0; i < clientsPool.size(); i++) {
-//			System.out.println("NAME " + clientsPool.get(i).getUserName());
-//			if (clientsPool.get(i).getUserName().equals(userName)) {
-//				return true;
-//			}
-//		}
-		
-		
-//		String userList = getLoginUserList();
-//		System.out.println("THERERER " + userList);
-//		String[] list = userList.split("%20");
-//		System.out.println("SIZE " + list.length);
-//		System.out.println("SIZE2 " + list[0]);
-//		for (int i = 0; i < list.length; i++) {
-//			if (list[i].equals(userName)) return true;
-//		}
+		for (int i = 0; i < clientsPool.size(); i++) {
+			if (clientsPool.get(i).getUserName().equals(userName)) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -84,6 +72,7 @@ public class Server {
 	 * @param port --- The port of socket which should be removed
 	 */
 	public static void removeUser(int port) {
+		if (clientsPool.size() == 0) return;
 		int index = 0;
 		for (int i = 0; i < clientsPool.size(); i++) {
 			if (clientsPool.get(i).getSocket().getPort() == port) {
@@ -126,6 +115,7 @@ public class Server {
 	
 	/**
 	 * Given a targer user name, get the out strem to that user, so that can establish the private chat channel
+	 * getUser, getSocket, getServerThread methods are finally served for this method
 	 * @param userName --- Chat target user name
 	 */
 	public static PrintWriter getChatTargetOut(String userName) {
@@ -137,6 +127,9 @@ public class Server {
 		return serverThread.getOut();
 	}
 
+	/**
+	 * Server start, run this before everything!
+	 */
 	public static void main(String[] args) {
 		try {
 			ServerSocket serverSocket = new ServerSocket(9000);

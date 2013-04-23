@@ -18,7 +18,7 @@ import Util.Protocol;
 import Util.ProtocolEnum;
 
 /**
- * Frame class to support the UI for person-to-person chat
+ * Frame class to support the UI for person-to-person private chat
  * @author Qing Shi
  *
  */
@@ -31,6 +31,13 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 	private JButton sendButton;
 	private JTextArea receiveTextArea, sendTextArea;
 	
+	/**
+	 * Create UI and start receiving
+	 * @param out
+	 * @param in
+	 * @param chatWithUsername --- private chat target 
+	 * @param myUsername --- myself
+	 */
 	public PrivateChatFrame(PrintWriter out, BufferedReader in, String chatWithUsername, String myUsername) {
 		this.out = out;
 		this.in = in;
@@ -40,6 +47,9 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 		receive();
 	}
 	
+	/**
+	 * Create private chat frame UI
+	 */
 	public void init() {
 		this.setTitle("Talking with " + chatWithUsername);  // Set the title to "Talking with somebody"
 		this.setSize(400, 400);
@@ -58,6 +68,10 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 		this.setVisible(true);
 	}
 
+	/**
+	 * Only send action.
+	 * Send message to server, then redirect to the target user
+	 */
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		// Send private chat message to the server first
@@ -75,6 +89,9 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 		}
 	}
 	
+	/**
+	 * Only wait for the private chat message redirected by server from the target user
+	 */
 	public void receive() {
 		while(true) {
 			try {
@@ -100,7 +117,8 @@ public class PrivateChatFrame extends JFrame implements ActionListener{
 	 * Check whether this is a private chat message.
 	 * Filter the updaet list noise message.
 	 * @param msg
-	 * @return
+	 * @return true --- private chat messge
+	 *         false --- update userlist message
 	 */
 	public boolean isPrivateChatMessage(String msg) {
 		if (msg.length() <= 8) return true;

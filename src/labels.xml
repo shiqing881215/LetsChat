@@ -1,0 +1,26 @@
+<labels>
+    <login>
+        <username>User Name</username>
+        <pwd>Password</pwd>
+        <button>Login</button>
+    </login>
+    <register>
+        <notification>                               New --- Please register first.                                     </notification>
+        <username>User Name</username>
+        <pwd>Password</pwd>
+        <confirm>Confirm Password</confirm>
+        <button>Register</button>
+    </register>
+    <chat>
+        <send>Send</send>
+        <private>Start private chat</private>
+    </chat>
+    <error>
+        <logPwd>Password error!</logPwd>
+        <logNoUser>User not existed!</logNoUser>
+        <logUserExisted>This user already login!</logUserExisted>
+        <button>OK</button>
+        <regPwd>Password not match!</regPwd>
+        <regUserExisted>Username already existed!</regUserExisted>
+    </error>
+</labels>

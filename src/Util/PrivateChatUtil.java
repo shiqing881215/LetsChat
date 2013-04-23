@@ -7,10 +7,10 @@ package Util;
  */
 public class PrivateChatUtil {
 	/**
-	 * Given the whole receive string, parse it into username and (fromUser + message) and store in pair structure.
+	 * Given the whole private chat string, parse it into target username and (fromUser + message) and store in pair structure.
 	 * Example "PrivateChatToServer sq lx hello" -> Pair<"sq","lx hello">
 	 * @param info
-	 * @return
+	 * @return Pair
 	 */
 	public static Pair<String, String> getUserNameAndMsg(String info) {
 		int blankOneIndex = info.indexOf(' ');

@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 
 /**
- * Thread class used to run the PrivateChatFrame to start a person-to-person chat
+ * Thread class used to support the PrivateChatFrame to start a person-to-person chat
+ * For each new private chat request, we must start a new thread like ServerThread to handle.
+ * This class is used to run thread and transfer the required parameters to PrivateChatFrame
  * @author Qing Shi
  *
  */

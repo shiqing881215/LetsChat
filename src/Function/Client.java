@@ -22,6 +22,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
+import Util.Label;
 import Util.Protocol;
 import Util.ProtocolEnum;
 import Util.SecurityUtil;
@@ -35,6 +36,7 @@ import Util.SecurityUtilEnum;
  *
  */
 public class Client implements ActionListener{
+	// UI components
 	private JFrame frame;
 	private JPanel loginPanel, chatPanel;
 	private JTextField sendTextField, userNameTextField, pwdTextField, 
@@ -42,10 +44,10 @@ public class Client implements ActionListener{
 	private JTextArea chatTextArea, userListTextArea;
 	private JButton sendButton, loginButton, registerButton, startPrivateChatButton;
 	
+	// Util instance variable to communicate with server
 	private Socket socket;
 	private PrintWriter out;
 	private BufferedReader in;
-	
 	private String userName;
 	
 	/**
@@ -59,28 +61,28 @@ public class Client implements ActionListener{
 		chatPanel = new JPanel();
 		
 		// Login and register compenents
-		JLabel userNameLabel = new JLabel("User Name");
-		JLabel pwdLabel = new JLabel("Password");
-		JLabel registerLabel = new JLabel("New --- Please register first.                                     ");
-		JLabel registerUserNameLabel = new JLabel("User Name");
-		JLabel registerPwdLabel = new JLabel("Password");
-		JLabel confirmPwdLabel = new JLabel("Confirm Password");
+		JLabel userNameLabel = new JLabel(Label.getLabel("login", "username"));
+		JLabel pwdLabel = new JLabel(Label.getLabel("login", "pwd"));
+		JLabel registerLabel = new JLabel(Label.getLabel("register", "notification"));
+		JLabel registerUserNameLabel = new JLabel(Label.getLabel("register", "username"));
+		JLabel registerPwdLabel = new JLabel(Label.getLabel("login", "pwd"));
+		JLabel confirmPwdLabel = new JLabel(Label.getLabel("login", "confirm"));
 		userNameTextField = new JTextField(23);
 		pwdTextField = new JTextField(23);
 		registerUserNameTextField = new JTextField(23);
 		registerPwdTextField = new JTextField(23);
 		registerConfirmPwdTextField = new JTextField(20);
-		loginButton = new JButton("Login");
+		loginButton = new JButton(Label.getLabel("login", "button"));
 		loginButton.addActionListener(this);
-		registerButton = new JButton("Register");
+		registerButton = new JButton(Label.getLabel("register", "button"));
 		registerButton.addActionListener(this);
 
 		// Chat components
 		sendTextField = new JTextField(10);
 		privateChatNameTextField = new JTextField(10);
-		sendButton = new JButton("send");
+		sendButton = new JButton(Label.getLabel("chat", "send"));
 		sendButton.addActionListener(this);
-		startPrivateChatButton = new JButton("Start private chat");
+		startPrivateChatButton = new JButton(Label.getLabel("chat", "private"));
 		startPrivateChatButton.addActionListener(this);
 		chatTextArea = new JTextArea(20,30);
 		chatTextArea.setEditable(false);
@@ -116,6 +118,7 @@ public class Client implements ActionListener{
 //		frame.getContentPane().add(textField,"South");
 //		frame.getContentPane().add(button, "West");
 		
+		// Default initial page is the login page
 		frame.setContentPane(loginPanel);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -128,10 +131,6 @@ public class Client implements ActionListener{
 				try {
 					System.out.println("Logout");
 					out.println("Logout " + socket.getLocalPort());  // "Logout socketport"
-					
-//					ActiveUserPool activeUserPool = ActiveUserPool.getActiveUserPool();
-//					activeUserPool.removeUser(frame.getTitle());
-					
 					out.flush();
 					socket.close();
 					frame.dispose();
@@ -143,7 +142,7 @@ public class Client implements ActionListener{
 		
 		// A little trick here, first connect the server
 		// Seems that logic should not be like this, however, it's not better to put this in the actionPerformed method.
-		// For later security check, we can do some trick
+		// A user must pass the security check then can really login. When this window close, everything will close --- so don't worry :)
 		try {
 			socket = new Socket("127.0.0.1",9000);
 			System.out.println("Client : " + socket.getLocalPort());
@@ -156,16 +155,9 @@ public class Client implements ActionListener{
 		} 
 	}
 	
-//	public String getUserName() {
-//		return this.userName;
-//	}
-//	
-//	public void setUserName(String userName) {
-//		this.userName = userName;
-//	}
-	
 	/**
 	 * Send group message to server.
+	 * eg: "Group sq hello"
 	 */
 	public void send() {
 		String msg = sendTextField.getText();
@@ -175,22 +167,49 @@ public class Client implements ActionListener{
 			chatTextArea.append("\n");
 		}
 		chatTextArea.append(userName + " " + formatter.format(new Date()) + ":\n" + msg);
-		msg = "Group " + userName + " " + msg;  // Group message  eg: "Group sq hello"
+		msg = "Group " + userName + " " + msg;   
 		out.println(msg);
 		out.flush();
 	}
 	
 	/**
 	 * Always running to receive any information from server side.
+	 * Based on protocol, perform different action.
 	 */
 	public void receive() {
 		while (true) {
 			try {
 				String msg = in.readLine();
-				int returnCode = Protocol.proceed(msg);
+				int returnCode = Protocol.proceed(msg); System.out.println(msg);System.out.println("CLIENT RETURN CODE:" + returnCode);
 				msg = msg.replaceAll("%20", "\n");
-
-				if (returnCode == ProtocolEnum.USERLIST.getValue()) {  // Update user list
+				
+				if (returnCode == ProtocolEnum.USER_EXISTED.getValue()) { // User already login, give error panel
+					String loginErrMsg = Label.getLabel("error", "logUserExisted");
+					final JFrame loginErrorFrame = new JFrame();   
+					loginErrorFrame.setSize(150, 100);
+					JPanel loginErrorPanel = new JPanel();
+					JLabel loginFailLabel = new JLabel(loginErrMsg);
+					JButton loginOkButton = new JButton(Label.getLabel("error", "button"));
+					loginOkButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent event) {
+							loginErrorFrame.dispose();
+						}
+					});
+					loginErrorPanel.add(loginFailLabel);
+					loginErrorPanel.add(loginOkButton);
+					loginErrorFrame.setContentPane(loginErrorPanel);
+					loginErrorFrame.setVisible(true);
+				} else if (returnCode == ProtocolEnum.USER_NOT_EXISTED.getValue()) { // This means login successfully
+					this.userName = userNameTextField.getText();
+					frame.setTitle(userName);
+					frame.setContentPane(chatPanel);
+					frame.setVisible(true);
+					out.println("Login " + userName);   // "Login username"
+					out.flush();
+					// Send the update request to server after login
+					ClientUpdateUserlistThread cuut = new ClientUpdateUserlistThread(out);
+					cuut.start();
+				} else if (returnCode == ProtocolEnum.USERLIST.getValue()) {  // Update user list
 					msg = msg.substring(9);  // remove the tag "userList"
 					userListTextArea.setText(msg);
 				} else if (returnCode == ProtocolEnum.GROUP.getValue()){  // Group message : "Group sq hello"
@@ -223,33 +242,26 @@ public class Client implements ActionListener{
 	}
 	
 	/**
-	 * When button is pressed, send the message.
+	 * When button is pressed, perform different action.
 	 * Login
 	 * Register
-	 * Send(chat message)
+	 * Send group message
+	 * Send/start private chat
 	 */
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getSource() == loginButton) {
 			int loginRetCode = SecurityUtil.checkLogin(userNameTextField.getText(), pwdTextField.getText());
 			System.out.println("code:" + loginRetCode);
-			if (loginRetCode == SecurityUtilEnum.LOGIN_SUCCESSFUL.getValue()) {
+			if (loginRetCode == SecurityUtilEnum.LOGIN_SUCCESSFUL.getValue()) {  // Pass security check, check same user login at server side
 				this.userName = userNameTextField.getText();
-				frame.setTitle(userName);
-				frame.setContentPane(chatPanel);
-				frame.setVisible(true);
-				out.println(userName);   // Send the login userName to server
+				out.println("LoginValidation " + userName);   
 				out.flush();
-				// Send the update request to server after login
-				ClientUpdateUserlistThread cuut = new ClientUpdateUserlistThread(out);
-				cuut.start();
 			} else {
 				String loginErrMsg;
-				if (loginRetCode == SecurityUtilEnum.LOGIN_USER_ALREADY_LOGIN.getValue()) {
-					loginErrMsg = "This user already login!";
-				} else if (loginRetCode == SecurityUtilEnum.LOGIN_PASSWORD_ERROR.getValue()) {
-					loginErrMsg = "Password error!";
+				if (loginRetCode == SecurityUtilEnum.LOGIN_PASSWORD_ERROR.getValue()) {
+					loginErrMsg = Label.getLabel("error", "logPwd");
 				} else {
-					loginErrMsg = "No such user!";
+					loginErrMsg = Label.getLabel("error", "logNoUser");
 				}
 				// Using final otherwise error in the actionPerformed below
 				// Also, use panel to add label and button at the same time coz final can be changed once
@@ -257,7 +269,7 @@ public class Client implements ActionListener{
 				loginErrorFrame.setSize(150, 100);
 				JPanel loginErrorPanel = new JPanel();
 				JLabel loginFailLabel = new JLabel(loginErrMsg);
-				JButton loginOkButton = new JButton("OK");
+				JButton loginOkButton = new JButton(Label.getLabel("error", "button"));
 				loginOkButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
 						loginErrorFrame.dispose();
@@ -272,28 +284,28 @@ public class Client implements ActionListener{
 		if (evt.getSource() == registerButton) {
 			int registerRetCode = SecurityUtil.checkRegister
 					(registerUserNameTextField.getText(), registerPwdTextField.getText(),registerConfirmPwdTextField.getText());
-			if (registerRetCode == 2) {  // Register success
+			if (registerRetCode == SecurityUtilEnum.REGISTER_SUCCESSFUL.getValue()) {  // Register success
 				this.userName = registerUserNameTextField.getText();
 				frame.setTitle(userName);
 				frame.setContentPane(chatPanel);
 				frame.setVisible(true);
-				out.println(userName);   // Send the login userName to server
+				out.println("Login " + userName);   // Send the login userName to server
 				out.flush();
 				// Send the update request to server after login
 				ClientUpdateUserlistThread cuut = new ClientUpdateUserlistThread(out);
 				cuut.start();
 			} else {
 				String registerErrMsg;
-				if (registerRetCode == 0) {
-					registerErrMsg = "Password not match!";
+				if (registerRetCode == SecurityUtilEnum.REGISTER_PASSWORD_ERROR.getValue()) {
+					registerErrMsg = Label.getLabel("error", "regPwd");
 				} else {
-					registerErrMsg = "Username already existed!";
+					registerErrMsg = Label.getLabel("error", "regUserExisted");
 				}
 				final JFrame registerErrorFrame = new JFrame();   
 				registerErrorFrame.setSize(160, 100);
 				JPanel registerErrorPanel = new JPanel();
 				JLabel registerFailLabel = new JLabel(registerErrMsg);
-				JButton registerOkButton = new JButton("OK");
+				JButton registerOkButton = new JButton(Label.getLabel("error", "button"));
 				registerOkButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent event) {
 						registerErrorFrame.dispose();
@@ -318,8 +330,7 @@ public class Client implements ActionListener{
 //				 TODO Add corresponding error panel here
 //			}
 		}
-		if (evt.getSource() == sendButton) {
-			// Send button send the message 
+		if (evt.getSource() == sendButton) {  // Group message
 			send();
 		}
 	}
