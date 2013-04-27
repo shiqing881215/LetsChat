@@ -22,6 +22,7 @@ import Util.ProtocolEnum;
  * @author Qing Shi
  *
  */
+//@SuppressWarnings("serial")
 public class PrivateChatFrame extends JFrame implements ActionListener{
 	private PrintWriter out;
 	private BufferedReader in;

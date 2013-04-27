@@ -36,7 +36,7 @@ public class SecurityUtil {
 	 * @param pwd
 	 * @return 0 --- No such user
 	 *         1 --- Password error
-	 *         2 --- User already login --- this one is not checked here, in client 
+	 *         2 --- User already login --- this one is not checked here, validate from server
 	 *         3 --- All good
 	 */
 	public static int checkLogin (String userName, String pwd) {

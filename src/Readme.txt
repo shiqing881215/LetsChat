@@ -84,6 +84,19 @@ Bug fix and code refactor
 4. Cannot start private chat window for the target user
 
 1. Done --- Add protocol, check it from server side instead of client side.
+2. Done --- Similar startegy as above, check whether the private chat target user is online
+
+Leave 3.4 here. All basic function implemented. Congratulation to myself for this simple chat program!!!!!
+Simple but also need some effort and time.
+Prepare to put it on the Github. Yeah!!! Open source, though it's a little simple and defected compared with others.
+
+If have time will come back for these:
+1. Small bugs fixed
+2. Code refactor (1) code structure 
+                 (2) util (remove some code duplicate and improce code reuse, eg error panel)
+                 (3) Code performance
+3. Try some new (1) New UI instead of Swing (Needs too many lines)
+                (2) New feature. Just compared to QQ (log, transfer files ....... need DB)
 
 
 

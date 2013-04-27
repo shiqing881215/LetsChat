@@ -78,10 +78,10 @@ public class ServerThread extends Thread{
 						String userName = msg.substring(msg.indexOf(' ') + 1);
 						boolean userIsLogin = Server.isALoginUser(userName);
 						if (userIsLogin) {
-							out.println("UserExisted"); System.out.println("YES!");
+							out.println("UserExisted"); 
 							out.flush();
 						} else {
-							out.println("UserNotExisted"); System.out.println("NO!");
+							out.println("UserNotExisted");
 							out.flush();
 						}
 					} else if (returnCode == ProtocolEnum.LOGIN.getValue()) {
@@ -120,6 +120,16 @@ public class ServerThread extends Thread{
 						PrintWriter chatTargetOut = Server.getChatTargetOut(targetUsername);
 						chatTargetOut.println("StartPrivateChatRemind " + fromUsername);  // "StartPrivateChatRemind from"
 						chatTargetOut.flush();
+					} else if (returnCode == ProtocolEnum.PRIVATE_CHAT_VALIDATION.getValue()) { // msg : "PrivateChatValidation target"
+						String userName = msg.substring(msg.indexOf(' ') + 1);
+						boolean userIsLogin = Server.isALoginUser(userName);  System.out.println("USERNAME : " + userName);
+						if (userIsLogin) {
+							out.println("PrivateChatValidationSuccess"); System.out.println("YES!");
+							out.flush();
+						} else {
+							out.println("PrivateChatValidationFailed"); System.out.println("NO!");
+							out.flush();
+						}
 					}
 				}
 			} catch (SocketException socketException) {  // Deal with issue when close window before login, coz now already connect with server.

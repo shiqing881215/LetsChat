@@ -22,5 +22,8 @@
         <button>OK</button>
         <regPwd>Password not match!</regPwd>
         <regUserExisted>Username already existed!</regUserExisted>
+        <priChatNoUser>User not online!</priChatNoUser>
+        <priChatEmptyUser>You must enter a user!</priChatEmptyUser>
+        <priChatSelf>You can not talk to yourself!</priChatSelf>
     </error>
 </labels>

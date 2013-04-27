@@ -129,7 +129,7 @@ public class Client implements ActionListener{
 			@Override
 			public void windowClosing(WindowEvent e) {   
 				try {
-					System.out.println("Logout");
+					System.out.println("Windows closed and Logout");
 					out.println("Logout " + socket.getLocalPort());  // "Logout socketport"
 					out.flush();
 					socket.close();
@@ -145,7 +145,7 @@ public class Client implements ActionListener{
 		// A user must pass the security check then can really login. When this window close, everything will close --- so don't worry :)
 		try {
 			socket = new Socket("127.0.0.1",9000);
-			System.out.println("Client : " + socket.getLocalPort());
+			//System.out.println("Client : " + socket.getLocalPort());
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out = new PrintWriter(socket.getOutputStream());
 		} catch (UnknownHostException e) { 
@@ -180,7 +180,7 @@ public class Client implements ActionListener{
 		while (true) {
 			try {
 				String msg = in.readLine();
-				int returnCode = Protocol.proceed(msg); System.out.println(msg);System.out.println("CLIENT RETURN CODE:" + returnCode);
+				int returnCode = Protocol.proceed(msg); //System.out.println(msg);System.out.println("CLIENT RETURN CODE:" + returnCode);
 				msg = msg.replaceAll("%20", "\n");
 				
 				if (returnCode == ProtocolEnum.USER_EXISTED.getValue()) { // User already login, give error panel
@@ -209,7 +209,33 @@ public class Client implements ActionListener{
 					// Send the update request to server after login
 					ClientUpdateUserlistThread cuut = new ClientUpdateUserlistThread(out);
 					cuut.start();
-				} else if (returnCode == ProtocolEnum.USERLIST.getValue()) {  // Update user list
+				} else if (returnCode == ProtocolEnum.PRIVATE_CHAT_VALIDATION_SUCCESS.getValue()) { 
+					String targetUserName = privateChatNameTextField.getText();
+					PrivateChatThread p = new PrivateChatThread(out,in, targetUserName, userName);
+					p.start();
+					String startPrivateChatRemind = "StartPrivateChatRemind " + targetUserName + " " + userName;
+					out.println(startPrivateChatRemind);
+					out.flush();
+					privateChatNameTextField.setText("");
+				} else if (returnCode == ProtocolEnum.PRIVATE_CHAT_VALIDATION_FAILED.getValue()) {
+					final JFrame privateChatErrorFrame = new JFrame();   
+					privateChatErrorFrame.setSize(150, 100);
+					JPanel privateChatErrorPanel = new JPanel();
+					JLabel privateChatFailLabel = new JLabel(Label.getLabel("error", "priChatNoUser"));
+					JButton privateChatOkButton = new JButton(Label.getLabel("error", "button"));
+					privateChatOkButton.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent event) {
+							privateChatErrorFrame.dispose();
+						}
+					});
+					privateChatErrorPanel.add(privateChatFailLabel);
+					privateChatErrorPanel.add(privateChatOkButton);
+					privateChatErrorFrame.setContentPane(privateChatErrorPanel);
+					privateChatErrorFrame.setVisible(true);
+				}
+				
+				
+				else if (returnCode == ProtocolEnum.USERLIST.getValue()) {  // Update user list
 					msg = msg.substring(9);  // remove the tag "userList"
 					userListTextArea.setText(msg);
 				} else if (returnCode == ProtocolEnum.GROUP.getValue()){  // Group message : "Group sq hello"
@@ -251,7 +277,7 @@ public class Client implements ActionListener{
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getSource() == loginButton) {
 			int loginRetCode = SecurityUtil.checkLogin(userNameTextField.getText(), pwdTextField.getText());
-			System.out.println("code:" + loginRetCode);
+			//System.out.println("code:" + loginRetCode);
 			if (loginRetCode == SecurityUtilEnum.LOGIN_SUCCESSFUL.getValue()) {  // Pass security check, check same user login at server side
 				this.userName = userNameTextField.getText();
 				out.println("LoginValidation " + userName);   
@@ -318,17 +344,32 @@ public class Client implements ActionListener{
 			}
 		}
 		if (evt.getSource() == startPrivateChatButton) {
-			// TODO error handling (similar issue with checking same user login twice --- server.clientsPool is empty)
 			String targetUserName = privateChatNameTextField.getText();
-//			if (Server.isALoginUser(userName)) {
-				PrivateChatThread p = new PrivateChatThread(out,in, targetUserName, userName);
-				p.start();
-				String startPrivateChatRemind = "StartPrivateChatRemind " + targetUserName + " " + userName;
-				out.println(startPrivateChatRemind);
+			if (targetUserName == null || targetUserName.length() == 0 || targetUserName.equals(userName)) {  // Empty private chat user and enter self name error situation
+				final JFrame privateChatErrorFrame = new JFrame();   
+				privateChatErrorFrame.setSize(150, 100);
+				JPanel privateChatErrorPanel = new JPanel();
+				JLabel privateChatFailLabel;
+				if (targetUserName.equals(userName)) {
+					privateChatFailLabel = new JLabel(Label.getLabel("error", "priChatSelf"));
+				} else {
+					privateChatFailLabel = new JLabel("You must enter a user!");
+				}
+				JButton privateChatOkButton = new JButton(Label.getLabel("error", "button"));
+				privateChatOkButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent event) {
+						privateChatErrorFrame.dispose();
+					}
+				});
+				privateChatErrorPanel.add(privateChatFailLabel);
+				privateChatErrorPanel.add(privateChatOkButton);
+				privateChatErrorFrame.setContentPane(privateChatErrorPanel);
+				privateChatErrorFrame.setVisible(true);
+			} else {
+				String privateChatValidation = "PrivateChatValidation " + targetUserName;   // msg : "PrivateChatValidation target"
+				out.println(privateChatValidation);
 				out.flush();
-//			} else {
-//				 TODO Add corresponding error panel here
-//			}
+			}
 		}
 		if (evt.getSource() == sendButton) {  // Group message
 			send();

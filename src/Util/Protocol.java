@@ -27,15 +27,21 @@ public class Protocol {
 			return ProtocolEnum.GROUP.getValue();
 		} else if (msg.length() >= 22 && msg.substring(0, 22).equals("StartPrivateChatRemind")) {
 			return ProtocolEnum.START_PRIVATE_CHAT.getValue();
-		} else if (msg.length() >= 15 && msg.substring(0, 15).equals("LoginValidation")) {
+		} else if (msg.length() >= 15 && msg.substring(0, 15).equals("LoginValidation")) { // Code before "Login". otherwise "overlap"
 			return ProtocolEnum.LOGIN_VALIDATION.getValue();
 		} else if (msg.length() >= 5 && msg.substring(0, 5).equals("Login")) {
 			return ProtocolEnum.LOGIN.getValue();
-		} else if (msg.length() >= 11 && msg.equals("UserExisted")) {
+		} else if (msg.length() >= 11 && msg.equals("UserExisted")) {  
 			return ProtocolEnum.USER_EXISTED.getValue();
 		} else if (msg.length() >= 14 && msg.equals("UserNotExisted")) {
 			return ProtocolEnum.USER_NOT_EXISTED.getValue();
-		}
+		} else if (msg.length() >= 27 && msg.equals("PrivateChatValidationFailed")) {  // Code before "PrivateChatValidation",  otherwise "overlap"
+			return ProtocolEnum.PRIVATE_CHAT_VALIDATION_FAILED.getValue();
+		} else if (msg.length() >= 28 && msg.equals("PrivateChatValidationSuccess")) {
+			return ProtocolEnum.PRIVATE_CHAT_VALIDATION_SUCCESS.getValue();
+		} else if (msg.length() >= 21 && msg.substring(0, 21).equals("PrivateChatValidation")) {
+			return ProtocolEnum.PRIVATE_CHAT_VALIDATION.getValue();
+		} 
 		return 101; // Group chat
 	}
 }
