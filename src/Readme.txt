@@ -97,6 +97,7 @@ If have time will come back for these:
                  (3) Code performance
 3. Try some new (1) New UI instead of Swing (Needs too many lines)
                 (2) New feature. Just compared to QQ (log, transfer files ....... need DB)
+                (3) Start method --- most simple way jar start, issue is cannot get the labels, it seems the problem of reading text file
 
 
 

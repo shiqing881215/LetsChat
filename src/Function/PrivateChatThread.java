@@ -24,7 +24,7 @@ public class PrivateChatThread extends Thread{
 	}
 	
 	public void run() {
-		//@SuppressWarnings("unused")
+		@SuppressWarnings("unused")
 		PrivateChatFrame privateChatFrame = new PrivateChatFrame(out,in, chatWithUsername, myUsername);
 	}
 }
